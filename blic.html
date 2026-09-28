@@ -1,0 +1,590 @@
+<!doctype html>
+<html lang="ru">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f8f4ed">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23302a25'/%3E%3Cpath d='M32 10 37 27 54 32 37 37 32 54 27 37 10 32 27 27Z' fill='%23e8b968'/%3E%3C/svg%3E">
+<title>Блиц по меню «Утка в Котелке»</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap">
+<style>
+  :root{
+    --ink:#302a25;--muted:#74685e;--accent:#925538;--paper:#fffdf9;--cream:#f8f4ed;--line:#d9cbbd;
+    --gold:#e8b968;--green:#236b4e;--red:#a44237;--blue:#3b82f6;
+    --serif:Alegreya,Georgia,"Times New Roman",serif;
+    --sans:"DM Sans",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  }
+  *,*::before,*::after{box-sizing:border-box;border:0 solid}
+  html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
+  body{margin:0;color:var(--ink);font-family:var(--serif);font-size:16px;line-height:1.5;
+    background:radial-gradient(circle at 88% 8%,#efdfcb 0,transparent 35%),radial-gradient(circle at 8% 85%,#eee4d6 0,transparent 35%),var(--cream)}
+  h2,p{margin:0}
+  h2{font-size:inherit;font-weight:700}
+  button{font:inherit;color:inherit;letter-spacing:inherit;margin:0;padding:0;background:none;cursor:pointer;-webkit-appearance:none;appearance:none}
+  button:disabled{cursor:default}
+  .hidden{display:none!important}
+
+  /* Каркас */
+  .app-shell{min-height:100vh;min-height:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));padding:1rem;display:flex;align-items:center;justify-content:center}
+  .game-board{position:relative;overflow:hidden;width:100%;max-width:48rem;min-height:530px;padding:1.25rem;background:var(--ink);color:var(--paper);border-radius:30px;box-shadow:0 26px 70px #302a2530}
+  .game-board::before{content:"";position:absolute;width:390px;height:390px;right:-160px;top:-190px;border:1px solid #ffffff20;border-radius:50%;box-shadow:0 0 0 40px #ffffff07,0 0 0 85px #ffffff05;pointer-events:none}
+  .screen{position:relative;z-index:1}
+  .surface{background:var(--paper);color:var(--ink);border-radius:23px;box-shadow:0 12px 32px #17110d19;padding:1.25rem}
+
+  /* Типографика */
+  .ui,.eyebrow{font-family:var(--sans)}
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.19em;text-transform:uppercase}
+  .c-gold{color:var(--gold)}
+  .c-accent{color:var(--accent)}
+  .row-between{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.75rem}
+  .intro{margin:2rem 0 1.75rem}
+  .hero-mark{font-size:3rem;line-height:1}
+  .title{margin-top:.75rem;font-size:1.875rem;line-height:1.25}
+  .lead{margin-top:.75rem;max-width:28rem;line-height:1.625;color:var(--line)}
+  .label{margin-bottom:.75rem;font-size:.875rem;line-height:1.25rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--line)}
+
+  /* Кнопки */
+  .primary{background:var(--gold);color:var(--ink);border-radius:15px;padding:15px 24px;font-weight:700;transition:transform .18s,filter .18s}
+  .secondary{border:1px solid #ffffff6b;border-radius:15px;padding:12px 18px;color:var(--paper);font-weight:700;transition:background .18s,opacity .18s,color .18s,border-color .18s}
+  .micro-btn{display:flex;align-items:center;justify-content:center;gap:.5rem;background:var(--blue);color:#fff;border-radius:15px;padding:15px 24px;font-weight:700;transition:transform .18s,filter .18s}
+  .hint-button{border:1px solid var(--line);border-radius:12px;padding:10px 14px;color:var(--accent);font-weight:700;background:#fffaf3}
+  .hint-button:disabled{opacity:.5;cursor:not-allowed}
+  .categories{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:2rem}
+  .category{border:1px solid #a99b8d;background:#ffffff0b;color:var(--paper);border-radius:999px;padding:10px 15px;font-size:13px;font-weight:600;transition:.18s}
+  .category[aria-pressed="true"]{background:var(--gold);border-color:var(--gold);color:var(--ink)}
+  .actions,.results-actions{display:flex;flex-direction:column;gap:.75rem}
+  .actions > button{flex:1 1 0%}
+  .results-actions{justify-content:center}
+  .reset{width:100%;margin-top:.75rem;font-size:.875rem;line-height:1.25rem;opacity:.7}
+  .reset.armed{opacity:1;border-color:var(--gold);color:var(--gold)}
+
+  /* Экран вопроса */
+  .game-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.75rem;font-size:.875rem;line-height:1.25rem;font-weight:700}
+  .stamps{display:flex;gap:.5rem}
+  .stamp{display:inline-flex;align-items:center;border:1px solid #ffffff43;border-radius:999px;padding:7px 12px}
+  .stamp-sm{font-size:.75rem;line-height:1rem}
+  .progress-track{height:8px;margin:1.25rem 0 1.5rem;border-radius:99px;background:#ffffff35;overflow:hidden}
+  .progress-fill{height:100%;width:0;background:var(--gold);border-radius:99px;transition:width .35s}
+  .q-type{margin-bottom:.75rem}
+  .question{margin-bottom:1.25rem;font-size:clamp(1.3rem,3vw,1.8rem);line-height:1.25}
+  .q-desc{display:block;margin-top:.5rem;color:var(--muted);font-weight:400;font-size:1.125rem;line-height:1.75rem}
+  .choices-list{display:grid;gap:.75rem}
+  .choices-tags{display:flex;flex-wrap:wrap;gap:.5rem}
+  .check{width:100%;margin-top:1rem}
+  .feedback{margin-top:1.25rem;padding-top:1rem;border-top:1px solid var(--line)}
+  .feedback-title{display:block;margin-bottom:.5rem;font-size:1.125rem;line-height:1.75rem}
+  .feedback-detail{font-size:16px;line-height:1.625;color:var(--muted)}
+  .explain-note{font-size:.875rem;line-height:1.25rem;color:var(--accent)}
+  .chunk{display:inline-block;background:#f4eadb;color:var(--accent);padding:2px 6px;border-radius:6px;font-weight:600;margin:2px}
+  .game-actions{display:flex;flex-wrap:wrap;align-items:center;gap:.75rem;margin-top:1.25rem}
+  .game-actions > button{flex:1 1 0%}
+  .game-actions > #next{flex-basis:100%;order:-1}
+
+  /* Одиночный выбор */
+  .answer{width:100%;min-height:64px;display:flex;align-items:center;gap:15px;text-align:left;padding:14px 18px;border:1.5px solid #ded3c6;background:#fff;border-radius:15px;color:var(--ink);font-weight:600;line-height:1.35;transition:transform .18s,border-color .18s,background .18s}
+  .answer.correct{border-color:var(--green);background:#eaf5ed;color:#194a37}
+  .answer.wrong{border-color:var(--red);background:#fff0ec;color:#85362e}
+  .answer-letter{flex:none;display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:#f4eadb;color:var(--accent);font-size:12px}
+  .answer .hint-letter{display:none;font-size:12px;color:var(--gold);font-weight:800;margin-left:auto}
+  .answer.hint-reveal .hint-letter{display:block}
+
+  /* Множественный выбор («Собери состав») */
+  .tag-option{padding:10px 16px;border:1.5px solid #ded3c6;background:#fff;border-radius:99px;color:var(--ink);font-weight:600;font-size:14px;transition:all .18s}
+  .tag-option.hint-reveal{border-color:var(--gold);background:#fff8e6;box-shadow:0 0 0 2px var(--gold)}
+  .tag-option.selected{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .tag-option.correct{border-color:var(--green);background:#eaf5ed;color:#194a37}
+  .tag-option.missed{border-color:var(--green);border-style:dashed;background:#fff;color:#194a37}
+  .tag-option.wrong{border-color:var(--red);background:#fff0ec;color:#85362e;text-decoration:line-through}
+
+  /* Итоги */
+  .results{text-align:center}
+  .results-eyebrow{margin-bottom:1.5rem}
+  .results-mark{margin-bottom:.75rem;font-size:3.75rem;line-height:1}
+  .results-title{font-size:1.875rem;line-height:2.25rem}
+  .result-count{margin-top:1.25rem;font-weight:700;font-size:clamp(4rem,10vw,6rem);line-height:1;color:var(--gold);font-variant-numeric:tabular-nums}
+  .result-score{margin-top:.75rem;font-weight:700;font-size:1.25rem;line-height:1.75rem}
+  .result-message{max-width:28rem;margin:1.25rem auto 1.75rem;line-height:1.625;color:var(--line)}
+
+  .appear{animation:rise .35s ease both}
+  @keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+  button:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+
+  /* Эффекты наведения — только там, где есть мышь: на телефоне они «залипают» после касания */
+  @media (hover:hover){
+    .primary:hover{transform:translateY(-2px);filter:brightness(1.06)}
+    .micro-btn:hover{transform:translateY(-2px);filter:brightness(1.1)}
+    .secondary:hover{background:#ffffff18;opacity:1}
+    .hint-button:hover:not(:disabled){background:#fcf0dd}
+    .category:hover{background:var(--gold);border-color:var(--gold);color:var(--ink)}
+    .tag-option:hover:not(:disabled):not(.selected){border-color:var(--accent);background:#fcf5e9}
+    .answer:hover:not(:disabled){transform:translateY(-2px);border-color:var(--accent);background:#fcf5e9}
+  }
+  @media (min-width:640px){
+    .app-shell,.game-board{padding:2rem}
+    .surface{padding:1.75rem}
+    .hero-mark{font-size:3.75rem}
+    .actions,.results-actions{flex-direction:row}
+    .game-actions > button,.game-actions > #next{flex:none;order:0}
+  }
+  @media (max-width:639.98px){.game-board{border-radius:22px}.answer{min-height:58px}}
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+
+<div class="app-shell" lang="ru">
+  <div class="game-board" aria-label="Игровая панель">
+
+    <!-- Экран настройки -->
+    <div id="setup" class="screen appear">
+      <div class="row-between">
+        <p class="eyebrow c-gold">Обучение составу блюд</p>
+        <span id="mastery-stats" class="stamp stamp-sm">Загрузка статистики...</span>
+      </div>
+      <div class="intro">
+        <span class="hero-mark" aria-hidden="true">✦</span>
+        <h2 class="title">Блиц по меню</h2>
+        <p class="lead">Выбери раздел или запусти умную тренировку. Система запомнит твои ошибки и будет повторять их в нужный момент.</p>
+      </div>
+
+      <p class="label">Раздел меню</p>
+      <div id="categories" class="categories" role="group" aria-label="Раздел меню">
+        <button type="button" class="category" data-category="all" aria-pressed="true">Все разделы</button>
+        <button type="button" class="category" data-category="Холодные закуски" aria-pressed="false">Холодные закуски</button>
+        <button type="button" class="category" data-category="Салаты" aria-pressed="false">Салаты</button>
+        <button type="button" class="category" data-category="Горячие блюда" aria-pressed="false">Горячие блюда</button>
+        <button type="button" class="category" data-category="Десерты" aria-pressed="false">Десерты</button>
+      </div>
+
+      <div class="actions">
+        <button id="start" type="button" class="primary">Начать тренировку (10 вопросов)</button>
+        <button id="micro-start" type="button" class="micro-btn"><span aria-hidden="true">⚡</span> Микро-сессия (5 мин)</button>
+      </div>
+      <button id="reset-progress" type="button" class="secondary reset">Сбросить весь прогресс обучения</button>
+    </div>
+
+    <!-- Экран игры -->
+    <div id="game" class="screen appear hidden">
+      <div class="game-top ui">
+        <span id="position" aria-live="polite"></span>
+        <div class="stamps">
+          <span id="streak" class="stamp"></span>
+          <span id="score" class="stamp"></span>
+        </div>
+      </div>
+      <div id="progress" class="progress-track" role="progressbar" aria-label="Прогресс раунда" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0">
+        <div id="progress-fill" class="progress-fill"></div>
+      </div>
+
+      <div class="surface">
+        <p id="question-type" class="eyebrow c-accent q-type"></p>
+        <h2 id="question" class="question"></h2>
+
+        <!-- Варианты ответа (генерируются скриптом) -->
+        <div id="choices" class="choices-list"></div>
+
+        <!-- Кнопка проверки для режима «Собери состав» -->
+        <button id="check-constructor" type="button" class="primary check hidden">Проверить состав</button>
+
+        <div id="feedback" class="feedback hidden" aria-live="polite">
+          <strong id="feedback-title" class="ui feedback-title"></strong>
+          <div id="feedback-detail" class="feedback-detail"></div>
+        </div>
+      </div>
+
+      <div class="game-actions">
+        <button id="hint" type="button" class="hint-button ui">💡 Помощь шефа (−100 очков)</button>
+        <button id="next" type="button" class="primary hidden">Далее →</button>
+        <button id="menu-from-game" type="button" class="secondary">В меню</button>
+      </div>
+    </div>
+
+    <!-- Экран результатов -->
+    <div id="results" class="screen appear hidden results">
+      <p class="eyebrow c-gold results-eyebrow">Раунд завершен</p>
+      <div class="results-mark" aria-hidden="true">✷</div>
+      <h2 class="results-title">Твой результат</h2>
+      <p id="result-count" class="result-count" aria-live="polite"></p>
+      <p id="result-score" class="result-score"></p>
+      <p id="result-message" class="result-message"></p>
+
+      <div class="results-actions">
+        <button id="retry" type="button" class="primary hidden">Повторить ошибки</button>
+        <button id="restart" type="button" class="secondary">Новый раунд</button>
+        <button id="menu-from-results" type="button" class="secondary">В главное меню</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // === 1. ДАННЫЕ ===
+  // Формат: [раздел, название, описание, вопрос-деталь, правильный ответ, неверный А, неверный Б, [ключевые ингредиенты]]
+  const dishes = [
+    ["Холодные закуски","Террин из фуа-гра","Террин из фуа-гра подают с хрустящими тостами, апельсиновым джемом, ягодами и малиновым соусом. При подаче добавляют немного арманьяка.","Какой напиток добавляют к террину при подаче?","Немного арманьяка","Тёмный ром","Виски", ["фуа-гра", "хрустящие тосты", "апельсиновый джем", "ягоды", "малиновый соус", "арманьяк"]],
+    ["Холодные закуски","Сырное плато","Сыры Мартелло, Мариджано, Качотта с лисичками, Дор Блю и Камамбер. Подают с мёдом, ягодами, виноградом и грецкими орехами.","Какие орехи подают к сырному плато?","Грецкие","Кедровые","Фисташки", ["Мартелло", "Мариджано", "Качотта с лисичками", "Дор Блю", "Камамбер", "мёд", "ягоды", "виноград", "грецкие орехи"]],
+    ["Холодные закуски","Тартар из говядины","Говядина, красный лук и шалот, корнишоны, каперсы, горчица, домашний майонез и табаско. Подают на тостах с эскалопом из фуа-гра сверху.","Что выкладывают поверх тартара?","Эскалоп из фуа-гра","Красную икру","Крем-чиз", ["говядина", "красный лук", "шалот", "корнишоны", "каперсы", "горчица", "домашний майонез", "табаско", "тосты", "эскалоп из фуа-гра"]],
+    ["Салаты","Микс с уткой и грушей","Микс салата, руккола и груша с облепиховым соусом и бальзамическим соусом. Добавляют рикотту и обжаренную утиную грудку, приготовленную сувид перед обжаркой.","Как готовят утиную грудку перед обжаркой?","Сувид","Во фритюре","Горячим копчением", ["микс салата", "руккола", "груша", "облепиховый соус", "бальзамический соус", "рикотта", "утиная грудка сувид"]],
+    ["Салаты","Трио оливье","Классическое оливье выкладывают «шайбочками», дополняют ростбифом из конины снизу, слабосолёным лососем и ростбифом из утиной грудки. Сверху кладут слайс редиса.","Что кладут сверху на часть с лососем?","Красную икру","Кедровые орехи","Фуа-гра", ["оливье", "ростбиф из конины", "слабосолёный лосось", "ростбиф из утиной грудки", "редис", "перепелиное яйцо", "красная икра"]],
+    ["Салаты","Цезарь с курицей/креветками","Романо, томаты черри и гренки с выбранной курицей или креветками. Соус: домашний майонез, каперсы, бальзамик, чеснок, анчоусы, ворчестер и пармезан.","Какая рыба входит в соус «Цезарь»?","Анчоусы","Судак","Палтус", ["романо", "томаты черри", "гренки", "курица или креветки", "майонез", "каперсы", "бальзамик", "чеснок", "анчоусы", "ворчестер", "пармезан"]],
+    ["Горячие блюда","Утка по-пекински","В первый день утку надувают и наполняют соусом хойсин со специями. На третий день покрывают карамелью из соевого соуса, мёда и специй, коптят на яблочной щепе. Подают с императорскими блинчиками.","Что показывают гостям до разделки и подачи?","Готовую утку целиком","Только блинчики","Только соус хойсин", ["утка", "соус хойсин", "гвоздика", "корица", "бадьян", "кайенский перец", "карамель из соевого соуса и мёда", "яблочная щепа", "императорские блинчики", "огурец", "дайкон", "лук"]],
+    ["Горячие блюда","Утиная грудка с яблочным круассаном","Утиную грудку без кожи готовят сувид и обжаривают на гриле. Яблоко сворачивают тонкой лентой в форме круассана и запекают с корицей, мёдом и сливочным маслом.","Из чего сделан «круассан» в гарнире?","Из тонкой ленты яблока","Из слоёного теста","Из картофельного пюре", ["утиная грудка", "сувид", "яблоко", "корица", "мёд", "сливочное масло", "малиновый соус", "свежие ягоды", "соус порто"]],
+    ["Горячие блюда","Турнедо Россини","Бездрожжевой тост и трюфельную пасту обжаривают в соусе из топлёной фуа-гра. На хлеб кладут пасту, обжаренную конину, жареную фуа-гра, соус порто и слайс маринованного трюфеля.","Какое мясо кладут на тост?","Конину","Ягнёнка","Куриную грудку", ["бездрожжевой тост", "трюфельная паста", "топлёная фуа-гра", "обжаренная конина", "жареная фуа-гра", "соус порто", "маринованный трюфель"]],
+    ["Десерты","Крем-чиз по-Казански","Основа: печенье со сливочным маслом, крем-чиз, сливки. Внутри курага, вымоченная в настойке «Бугульма», чернослив в тёмном роме, сметана и корт.","В чём вымачивают курагу?","В настойке «Бугульма»","В соусе порто","В лимонном соке", ["печенье", "сливочное масло", "крем-чиз", "сливки", "курага в настойке Бугульма", "чернослив в роме", "сметана", "корт", "сахарная пудра"]],
+    ["Десерты","Графские развалины","Миндальное безе, шоколадный и заварной кремы, малиновый соус, чернослив, вымоченный в роме, орехи и свежие ягоды.","В чём вымачивают чернослив?","В роме","В белом вине","В апельсиновом соке", ["миндальное безе", "шоколадный крем", "заварной крем", "малиновый соус", "чернослив в роме", "орехи", "свежие ягоды"]]
+  ];
+
+  const $ = id => document.getElementById(id);
+
+  // === 2. ПРОГРЕСС (хранится в браузере на этом устройстве) ===
+  const STORE_KEY = "menuMastery";
+  let memoryMastery = {}; // запасной вариант, если браузер не даёт сохранять
+  const getMastery = () => {
+    try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; }
+    catch (e) { return memoryMastery; }
+  };
+  const saveMastery = data => {
+    memoryMastery = data;
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(data)); } catch (e) {}
+  };
+
+  const updateMastery = (dishIndex, isCorrect) => {
+    const mastery = getMastery();
+    if (!mastery[dishIndex]) mastery[dishIndex] = { status: "new", streak: 0 };
+
+    if (isCorrect) {
+      mastery[dishIndex].streak += 1;
+      if (mastery[dishIndex].streak >= 2) mastery[dishIndex].status = "known";
+      else if (mastery[dishIndex].status === "new") mastery[dishIndex].status = "learning";
+    } else {
+      mastery[dishIndex].streak = 0;
+      mastery[dishIndex].status = "learning";
+    }
+    saveMastery(mastery);
+    updateMasteryStatsUI();
+  };
+
+  // «Новое» — все блюда, которые ещё ни разу не попадались
+  const updateMasteryStatsUI = () => {
+    const m = getMastery();
+    let known = 0, learning = 0;
+    dishes.forEach((_, i) => {
+      const status = m[i] && m[i].status;
+      if (status === "known") known++;
+      else if (status === "learning") learning++;
+    });
+    const fresh = dishes.length - known - learning;
+    $("mastery-stats").innerHTML = `🟢 ${known} Знаю &nbsp;|&nbsp; 🟡 ${learning} Учу &nbsp;|&nbsp; ⚪ ${fresh} Новое`;
+  };
+
+  // === 3. ГЕНЕРАЦИЯ ЗАДАНИЙ ===
+  const shuffle = items => {
+    const copy = [...items];
+    for (let i = copy.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+    return copy;
+  };
+
+  const allIngredients = [...new Set(dishes.flatMap(d => d[7]))];
+
+  // Для каждого блюда — 3 типа заданий
+  const tasks = dishes.flatMap((dish, dishIndex) => {
+    const [section, name, description, detailQuestion, detailAnswer, wrongA, wrongB, keyIngredients] = dish;
+    const alternatives = shuffle(dishes.filter((d, i) => i !== dishIndex && d[0] === section)).slice(0, 2).map(d => d[1]);
+
+    // Задание 1: Узнай блюдо
+    const task1 = {
+      section, dishIndex, type: "Узнай блюдо", mode: "single",
+      question: `Какое блюдо соответствует описанию?<span class="q-desc">${description}</span>`,
+      answer: name, options: [name, ...alternatives],
+      explanation: `<span class="chunk">${name}</span>. ${description}`
+    };
+
+    // Задание 2: Деталь меню
+    const task2 = {
+      section, dishIndex, type: "Деталь меню", mode: "single",
+      question: `${name}. ${detailQuestion}`,
+      answer: detailAnswer, options: [detailAnswer, wrongA, wrongB],
+      explanation: `<span class="chunk">${name}</span>. ${description}`
+    };
+
+    // Задание 3: Собери состав
+    const distractors = shuffle(allIngredients.filter(ing => !keyIngredients.includes(ing))).slice(0, 4);
+    const task3 = {
+      section, dishIndex, type: "Собери состав", mode: "multi",
+      question: `Выберите <strong>все</strong> ключевые ингредиенты блюда «${name}»:`,
+      correctIngredients: keyIngredients,
+      options: shuffle([...keyIngredients, ...distractors]),
+      explanation: `<span class="chunk">${name}</span>. Состав: ${keyIngredients.join(", ")}.<br><em class="explain-note">${description}</em>`
+    };
+
+    return [task1, task2, task3];
+  });
+
+  // === 4. СОСТОЯНИЕ ИГРЫ ===
+  let category = "all", round = [], index = 0, correctCount = 0, points = 0, streak = 0, misses = [], answered = false, hintUsed = false;
+  const selectedTags = new Set();
+  const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // === 5. ЛОГИКА ИНТЕРФЕЙСА ===
+  $("categories").addEventListener("click", e => {
+    const btn = e.target.closest("button[data-category]");
+    if (!btn) return;
+    category = btn.dataset.category;
+    $("categories").querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", String(b === btn)));
+  });
+
+  function goMenu() {
+    $("game").classList.add("hidden");
+    $("results").classList.add("hidden");
+    $("setup").classList.remove("hidden");
+    updateMasteryStatsUI();
+  }
+
+  // На телефоне после «Далее» возвращаем экран к началу вопроса
+  function scrollBoardIntoView() {
+    const top = document.querySelector(".game-board").getBoundingClientRect().top;
+    if (top < 0) window.scrollBy({ top: top - 12, behavior: reduceMotion ? "auto" : "smooth" });
+  }
+
+  function getWeightedPool(isMicro) {
+    const mastery = getMastery();
+    // Перемешиваем до сортировки, чтобы блюда с одинаковым весом каждый раз шли в новом порядке
+    const inCategory = () => shuffle(tasks.filter(t => category === "all" || t.section === category));
+    let pool = inCategory();
+
+    // Взвешивание: Учу (вес 3), Новое (вес 2), Знаю (вес 1)
+    pool.forEach(t => {
+      const m = mastery[t.dishIndex] || { status: "new" };
+      t.weight = m.status === "learning" ? 3 : (m.status === "new" ? 2 : 1);
+    });
+    pool.sort((a, b) => b.weight - a.weight);
+
+    if (isMicro) {
+      // Микро-сессия: только «Учу» и «Новое», максимум 5 заданий
+      pool = pool.filter(t => t.weight > 1).slice(0, 5);
+      if (pool.length === 0) pool = inCategory().slice(0, 5);
+    } else {
+      // 10 вопросов, каждое блюдо — не больше одного раза
+      const uniqueDishes = [...new Set(pool.map(t => t.dishIndex))].slice(0, 10);
+      pool = uniqueDishes.map(id => {
+        const variants = pool.filter(t => t.dishIndex === id);
+        return variants[Math.floor(Math.random() * variants.length)]; // случайный тип задания для блюда
+      });
+    }
+    return shuffle(pool);
+  }
+
+  function startRound(isMicro = false) {
+    round = getWeightedPool(isMicro);
+    index = 0; correctCount = 0; points = 0; streak = 0; misses = [];
+    $("setup").classList.add("hidden");
+    $("results").classList.add("hidden");
+    $("game").classList.remove("hidden");
+    showQuestion();
+  }
+
+  function showQuestion() {
+    if (index >= round.length) { finish(); scrollBoardIntoView(); return; }
+    answered = false; hintUsed = false; selectedTags.clear();
+
+    const task = round[index];
+    $("hint").disabled = points < 100;
+    $("position").textContent = `ЗАДАНИЕ ${index + 1} / ${round.length}`;
+    $("streak").textContent = `✦ Серия ${streak}`;
+    $("score").textContent = `${points} очков`;
+    $("progress").setAttribute("aria-valuemax", String(round.length));
+    $("progress").setAttribute("aria-valuenow", String(index));
+    $("progress-fill").style.width = `${index / round.length * 100}%`;
+
+    $("question-type").textContent = `${task.type} · ${task.section}`;
+    $("question").innerHTML = task.question;
+    $("feedback").classList.add("hidden");
+    $("next").classList.add("hidden");
+    $("check-constructor").classList.add("hidden");
+
+    const choices = $("choices");
+    choices.replaceChildren();
+    choices.className = task.mode === "single" ? "choices-list" : "choices-tags";
+
+    if (task.mode === "single") {
+      shuffle(task.options).forEach((option, i) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "answer";
+        btn.dataset.value = option;
+        btn.innerHTML = `<span class="answer-letter">${["А","Б","В","Г"][i]}</span> <span>${option}</span> <span class="hint-letter">${option.charAt(0)}</span>`;
+        btn.addEventListener("click", () => gradeSingle(option, btn));
+        choices.appendChild(btn);
+      });
+    } else {
+      // Режим «Собери состав»
+      task.options.forEach(opt => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "tag-option";
+        btn.textContent = opt;
+        btn.dataset.value = opt;
+        btn.addEventListener("click", () => toggleTag(btn, opt));
+        choices.appendChild(btn);
+      });
+      $("check-constructor").classList.remove("hidden");
+      $("check-constructor").onclick = gradeMulti;
+    }
+    scrollBoardIntoView();
+  }
+
+  function toggleTag(btn, value) {
+    if (answered) return;
+    if (selectedTags.has(value)) {
+      selectedTags.delete(value);
+      btn.classList.remove("selected");
+    } else {
+      selectedTags.add(value);
+      btn.classList.add("selected");
+    }
+  }
+
+  function gradeSingle(value, selectedBtn) {
+    if (answered) return;
+    answered = true;
+    const task = round[index];
+    const isCorrect = value === task.answer;
+    processResult(isCorrect, task);
+
+    $("choices").querySelectorAll("button").forEach(btn => {
+      btn.disabled = true;
+      if (btn.dataset.value === task.answer) btn.classList.add("correct");
+      else if (btn === selectedBtn) btn.classList.add("wrong");
+    });
+    showFeedback(isCorrect, task);
+  }
+
+  function gradeMulti() {
+    if (answered || selectedTags.size === 0) return;
+    answered = true;
+    const task = round[index];
+
+    // Верно, только если выбраны все нужные и нет лишних
+    const correctSet = new Set(task.correctIngredients);
+    let isCorrect = selectedTags.size === correctSet.size;
+    for (const tag of selectedTags) {
+      if (!correctSet.has(tag)) isCorrect = false;
+    }
+
+    processResult(isCorrect, task);
+
+    $("choices").querySelectorAll("button").forEach(btn => {
+      btn.disabled = true;
+      const val = btn.dataset.value;
+      if (correctSet.has(val)) btn.classList.add(selectedTags.has(val) ? "correct" : "missed");
+      else if (selectedTags.has(val)) btn.classList.add("wrong");
+    });
+    showFeedback(isCorrect, task);
+  }
+
+  function processResult(isCorrect, task) {
+    if (isCorrect) {
+      correctCount++; streak++;
+      points += 100 + Math.min(streak - 1, 5) * 20;
+    } else {
+      misses.push(task);
+      streak = 0;
+    }
+    updateMastery(task.dishIndex, isCorrect);
+    $("score").textContent = `${points} очков`;
+    $("streak").textContent = `✦ Серия ${streak}`;
+    $("progress").setAttribute("aria-valuenow", String(index + 1));
+    $("progress-fill").style.width = `${(index + 1) / round.length * 100}%`;
+    $("hint").disabled = true;
+    $("next").classList.remove("hidden");
+    $("next").focus();
+    $("check-constructor").classList.add("hidden");
+  }
+
+  function showFeedback(isCorrect, task) {
+    $("feedback-title").textContent = isCorrect
+      ? "Верно! Отличная работа."
+      : task.mode === "single"
+        ? `Правильный ответ: ${task.answer}`
+        : "Не совсем. Пунктир — пропущено, зачёркнуто — лишнее.";
+    $("feedback-title").style.color = isCorrect ? "var(--green)" : "var(--red)";
+    $("feedback-detail").innerHTML = task.explanation;
+    $("feedback").classList.remove("hidden");
+  }
+
+  function finish() {
+    $("game").classList.add("hidden");
+    $("results").classList.remove("hidden");
+    $("result-count").textContent = `${correctCount} / ${round.length}`;
+    $("result-score").textContent = `${points} очков`;
+    $("result-message").textContent = misses.length
+      ? `Есть ${misses.length} блюд для повторения. Система добавила их в очередь "Учу".`
+      : "Без ошибок! Ты отлично знаешь этот раздел.";
+    $("retry").classList.toggle("hidden", misses.length === 0);
+  }
+
+  // === 6. ОБРАБОТЧИКИ СОБЫТИЙ ===
+  $("start").addEventListener("click", () => startRound(false));
+  $("micro-start").addEventListener("click", () => startRound(true));
+
+  $("retry").addEventListener("click", () => {
+    round = shuffle(misses);
+    index = 0; correctCount = 0; points = 0; streak = 0; misses = [];
+    $("results").classList.add("hidden");
+    $("game").classList.remove("hidden");
+    showQuestion();
+  });
+
+  $("restart").addEventListener("click", () => startRound(false));
+  $("menu-from-game").addEventListener("click", goMenu);
+  $("menu-from-results").addEventListener("click", goMenu);
+
+  $("next").addEventListener("click", () => { index++; showQuestion(); });
+
+  $("hint").addEventListener("click", () => {
+    if (answered || hintUsed || points < 100) return;
+    const task = round[index];
+    hintUsed = true; points -= 100;
+    $("score").textContent = `${points} очков`;
+    $("hint").disabled = true;
+
+    if (task.mode === "single") {
+      const correctBtn = [...$("choices").querySelectorAll("button")].find(b => b.dataset.value === task.answer);
+      if (correctBtn) correctBtn.classList.add("hint-reveal");
+    } else {
+      // Подсвечиваем один правильный ингредиент, который ещё не выбран
+      const correctSet = new Set(task.correctIngredients);
+      const options = [...$("choices").querySelectorAll("button")];
+      const toReveal = options.find(b => correctSet.has(b.dataset.value) && !b.classList.contains("selected"));
+      if (toReveal) toReveal.classList.add("hint-reveal");
+    }
+  });
+
+  // Сброс прогресса: подтверждение прямо на кнопке, без всплывающих окон
+  const RESET_LABEL = "Сбросить весь прогресс обучения";
+  let resetTimer = null;
+  function disarmReset(label = RESET_LABEL) {
+    clearTimeout(resetTimer); resetTimer = null;
+    $("reset-progress").classList.remove("armed");
+    $("reset-progress").textContent = label;
+  }
+  $("reset-progress").addEventListener("click", () => {
+    if (!resetTimer) {
+      $("reset-progress").classList.add("armed");
+      $("reset-progress").textContent = "Точно сбросить? Нажми ещё раз";
+      resetTimer = setTimeout(() => disarmReset(), 4000);
+      return;
+    }
+    saveMastery({});
+    updateMasteryStatsUI();
+    disarmReset("Прогресс сброшен");
+    setTimeout(() => { if (!resetTimer) $("reset-progress").textContent = RESET_LABEL; }, 2000);
+  });
+
+  // Инициализация
+  updateMasteryStatsUI();
+</script>
+</html>

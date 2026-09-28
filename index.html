@@ -1,590 +1,872 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru">
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#f8f4ed">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23302a25'/%3E%3Cpath d='M32 10 37 27 54 32 37 37 32 54 27 37 10 32 27 27Z' fill='%23e8b968'/%3E%3C/svg%3E">
-<title>Блиц по меню «Утка в Котелке»</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap">
-<style>
-  :root{
-    --ink:#302a25;--muted:#74685e;--accent:#925538;--paper:#fffdf9;--cream:#f8f4ed;--line:#d9cbbd;
-    --gold:#e8b968;--green:#236b4e;--red:#a44237;--blue:#3b82f6;
-    --serif:Alegreya,Georgia,"Times New Roman",serif;
-    --sans:"DM Sans",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
-  }
-  *,*::before,*::after{box-sizing:border-box;border:0 solid}
-  html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
-  body{margin:0;color:var(--ink);font-family:var(--serif);font-size:16px;line-height:1.5;
-    background:radial-gradient(circle at 88% 8%,#efdfcb 0,transparent 35%),radial-gradient(circle at 8% 85%,#eee4d6 0,transparent 35%),var(--cream)}
-  h2,p{margin:0}
-  h2{font-size:inherit;font-weight:700}
-  button{font:inherit;color:inherit;letter-spacing:inherit;margin:0;padding:0;background:none;cursor:pointer;-webkit-appearance:none;appearance:none}
-  button:disabled{cursor:default}
-  .hidden{display:none!important}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#fdf6f0">
+    <title>Тренажёр меню: Утка в Котелке</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🦆%3C/text%3E%3C/svg%3E">
+    <style>
+        :root {
+            --bg-color: #fdf6f0;
+            --card-bg: #ffffff;
+            --primary: #d4a5a5;
+            --primary-dark: #b58383;
+            --secondary: #9fb8ad;
+            --accent: #f2cc8f;
+            --text: #4a4a4a;
+            --text-light: #7a7a7a;
+            --allergen: #d32f2f;
+            --success: #4e9a55;
+            --error: #d05454;
+        }
 
-  /* Каркас */
-  .app-shell{min-height:100vh;min-height:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));padding:1rem;display:flex;align-items:center;justify-content:center}
-  .game-board{position:relative;overflow:hidden;width:100%;max-width:48rem;min-height:530px;padding:1.25rem;background:var(--ink);color:var(--paper);border-radius:30px;box-shadow:0 26px 70px #302a2530}
-  .game-board::before{content:"";position:absolute;width:390px;height:390px;right:-160px;top:-190px;border:1px solid #ffffff20;border-radius:50%;box-shadow:0 0 0 40px #ffffff07,0 0 0 85px #ffffff05;pointer-events:none}
-  .screen{position:relative;z-index:1}
-  .surface{background:var(--paper);color:var(--ink);border-radius:23px;box-shadow:0 12px 32px #17110d19;padding:1.25rem}
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        [hidden] { display: none !important; }
+        html { -webkit-text-size-adjust: 100%; }
+        body { font-family: 'Segoe UI', -apple-system, system-ui, Roboto, Tahoma, Verdana, sans-serif; background-color: var(--bg-color); color: var(--text); padding: 20px; max-width: 800px; margin: 0 auto; line-height: 1.4; }
+        button, select { font-family: inherit; }
 
-  /* Типографика */
-  .ui,.eyebrow{font-family:var(--sans)}
-  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.19em;text-transform:uppercase}
-  .c-gold{color:var(--gold)}
-  .c-accent{color:var(--accent)}
-  .row-between{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.75rem}
-  .intro{margin:2rem 0 1.75rem}
-  .hero-mark{font-size:3rem;line-height:1}
-  .title{margin-top:.75rem;font-size:1.875rem;line-height:1.25}
-  .lead{margin-top:.75rem;max-width:28rem;line-height:1.625;color:var(--line)}
-  .label{margin-bottom:.75rem;font-size:.875rem;line-height:1.25rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--line)}
+        h1 { text-align: center; color: var(--primary-dark); margin-bottom: 20px; font-size: 1.8rem; line-height: 1.25; }
 
-  /* Кнопки */
-  .primary{background:var(--gold);color:var(--ink);border-radius:15px;padding:15px 24px;font-weight:700;transition:transform .18s,filter .18s}
-  .secondary{border:1px solid #ffffff6b;border-radius:15px;padding:12px 18px;color:var(--paper);font-weight:700;transition:background .18s,opacity .18s,color .18s,border-color .18s}
-  .micro-btn{display:flex;align-items:center;justify-content:center;gap:.5rem;background:var(--blue);color:#fff;border-radius:15px;padding:15px 24px;font-weight:700;transition:transform .18s,filter .18s}
-  .hint-button{border:1px solid var(--line);border-radius:12px;padding:10px 14px;color:var(--accent);font-weight:700;background:#fffaf3}
-  .hint-button:disabled{opacity:.5;cursor:not-allowed}
-  .categories{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:2rem}
-  .category{border:1px solid #a99b8d;background:#ffffff0b;color:var(--paper);border-radius:999px;padding:10px 15px;font-size:13px;font-weight:600;transition:.18s}
-  .category[aria-pressed="true"]{background:var(--gold);border-color:var(--gold);color:var(--ink)}
-  .actions,.results-actions{display:flex;flex-direction:column;gap:.75rem}
-  .actions > button{flex:1 1 0%}
-  .results-actions{justify-content:center}
-  .reset{width:100%;margin-top:.75rem;font-size:.875rem;line-height:1.25rem;opacity:.7}
-  .reset.armed{opacity:1;border-color:var(--gold);color:var(--gold)}
+        .controls { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 20px; }
+        .mode-switch { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+        select, button { padding: 10px 15px; border: 2px solid var(--primary); border-radius: 8px; background: var(--card-bg); color: var(--text); font-size: 1rem; cursor: pointer; transition: all 0.2s; }
+        button:disabled { cursor: default; }
+        button.active { background: var(--primary-dark); color: white; border-color: var(--primary-dark); }
+        button:focus-visible, select:focus-visible, .flashcard-scene:focus-visible, .match-item:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 
-  /* Экран вопроса */
-  .game-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.75rem;font-size:.875rem;line-height:1.25rem;font-weight:700}
-  .stamps{display:flex;gap:.5rem}
-  .stamp{display:inline-flex;align-items:center;border:1px solid #ffffff43;border-radius:999px;padding:7px 12px}
-  .stamp-sm{font-size:.75rem;line-height:1rem}
-  .progress-track{height:8px;margin:1.25rem 0 1.5rem;border-radius:99px;background:#ffffff35;overflow:hidden}
-  .progress-fill{height:100%;width:0;background:var(--gold);border-radius:99px;transition:width .35s}
-  .q-type{margin-bottom:.75rem}
-  .question{margin-bottom:1.25rem;font-size:clamp(1.3rem,3vw,1.8rem);line-height:1.25}
-  .q-desc{display:block;margin-top:.5rem;color:var(--muted);font-weight:400;font-size:1.125rem;line-height:1.75rem}
-  .choices-list{display:grid;gap:.75rem}
-  .choices-tags{display:flex;flex-wrap:wrap;gap:.5rem}
-  .check{width:100%;margin-top:1rem}
-  .feedback{margin-top:1.25rem;padding-top:1rem;border-top:1px solid var(--line)}
-  .feedback-title{display:block;margin-bottom:.5rem;font-size:1.125rem;line-height:1.75rem}
-  .feedback-detail{font-size:16px;line-height:1.625;color:var(--muted)}
-  .explain-note{font-size:.875rem;line-height:1.25rem;color:var(--accent)}
-  .chunk{display:inline-block;background:#f4eadb;color:var(--accent);padding:2px 6px;border-radius:6px;font-weight:600;margin:2px}
-  .game-actions{display:flex;flex-wrap:wrap;align-items:center;gap:.75rem;margin-top:1.25rem}
-  .game-actions > button{flex:1 1 0%}
-  .game-actions > #next{flex-basis:100%;order:-1}
+        .progress-container { background: #e0e0e0; border-radius: 10px; height: 20px; margin-bottom: 20px; overflow: hidden; position: relative; }
+        .progress-bar { background: var(--secondary); height: 100%; width: 0%; transition: width 0.5s ease; }
+        .progress-text { position: absolute; inset: 0; text-align: center; line-height: 20px; font-size: 0.85rem; font-weight: bold; color: var(--text); }
 
-  /* Одиночный выбор */
-  .answer{width:100%;min-height:64px;display:flex;align-items:center;gap:15px;text-align:left;padding:14px 18px;border:1.5px solid #ded3c6;background:#fff;border-radius:15px;color:var(--ink);font-weight:600;line-height:1.35;transition:transform .18s,border-color .18s,background .18s}
-  .answer.correct{border-color:var(--green);background:#eaf5ed;color:#194a37}
-  .answer.wrong{border-color:var(--red);background:#fff0ec;color:#85362e}
-  .answer-letter{flex:none;display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:#f4eadb;color:var(--accent);font-size:12px}
-  .answer .hint-letter{display:none;font-size:12px;color:var(--gold);font-weight:800;margin-left:auto}
-  .answer.hint-reveal .hint-letter{display:block}
+        .mode-container { display: none; }
+        .mode-container.active { display: block; }
 
-  /* Множественный выбор («Собери состав») */
-  .tag-option{padding:10px 16px;border:1.5px solid #ded3c6;background:#fff;border-radius:99px;color:var(--ink);font-weight:600;font-size:14px;transition:all .18s}
-  .tag-option.hint-reveal{border-color:var(--gold);background:#fff8e6;box-shadow:0 0 0 2px var(--gold)}
-  .tag-option.selected{background:var(--ink);color:var(--paper);border-color:var(--ink)}
-  .tag-option.correct{border-color:var(--green);background:#eaf5ed;color:#194a37}
-  .tag-option.missed{border-color:var(--green);border-style:dashed;background:#fff;color:#194a37}
-  .tag-option.wrong{border-color:var(--red);background:#fff0ec;color:#85362e;text-decoration:line-through}
+        /* Карточки: обе стороны лежат в одной ячейке grid, поэтому карточка растёт под длинный состав */
+        .flashcard-scene { perspective: 1000px; margin: 20px 0; cursor: pointer; -webkit-tap-highlight-color: transparent; border-radius: 15px; }
+        .flashcard { display: grid; min-height: 400px; transition: transform 0.6s; -webkit-transform-style: preserve-3d; transform-style: preserve-3d; }
+        .flashcard.no-anim { transition: none; }
+        .flashcard.is-flipped { transform: rotateY(180deg); }
+        .card-face { grid-area: 1 / 1; -webkit-backface-visibility: hidden; backface-visibility: hidden; border-radius: 15px; padding: 25px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); background: var(--card-bg); }
+        .card-back { transform: rotateY(180deg); background: #fff9f0; align-items: flex-start; justify-content: flex-start; text-align: left; }
+        .card-category { font-size: 0.9rem; color: var(--text-light); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+        .card-title { font-size: 1.6rem; color: var(--primary-dark); font-weight: bold; margin-bottom: 15px; }
+        .card-hint { color: var(--text-light); margin-top: 20px; }
+        .card-status { margin-top: 14px; font-size: 0.9rem; font-weight: 600; padding: 4px 12px; border-radius: 999px; background: var(--bg-color); }
+        .card-ingredients { font-size: 1.05rem; line-height: 1.5; margin-bottom: 15px; width: 100%; }
+        .card-allergens { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; width: 100%; font-size: 0.9rem; }
+        .card-allergens span { background: #fdecea; color: var(--allergen); border-radius: 999px; padding: 2px 10px; font-weight: 600; }
+        .card-notes { font-size: 0.95rem; color: var(--primary-dark); font-style: italic; margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--primary); width: 100%; }
+        .allergen { color: var(--allergen); font-weight: bold; }
 
-  /* Итоги */
-  .results{text-align:center}
-  .results-eyebrow{margin-bottom:1.5rem}
-  .results-mark{margin-bottom:.75rem;font-size:3.75rem;line-height:1}
-  .results-title{font-size:1.875rem;line-height:2.25rem}
-  .result-count{margin-top:1.25rem;font-weight:700;font-size:clamp(4rem,10vw,6rem);line-height:1;color:var(--gold);font-variant-numeric:tabular-nums}
-  .result-score{margin-top:.75rem;font-weight:700;font-size:1.25rem;line-height:1.75rem}
-  .result-message{max-width:28rem;margin:1.25rem auto 1.75rem;line-height:1.625;color:var(--line)}
+        .card-controls { display: grid; grid-template-columns: auto 1fr 1fr auto; gap: 10px; margin-top: 15px; }
+        .btn-know { background: var(--success); color: white; border-color: var(--success); }
+        .btn-learn { background: var(--accent); color: var(--text); border-color: var(--accent); }
 
-  .appear{animation:rise .35s ease both}
-  @keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
-  button:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+        /* Заучивание (пропуски) */
+        .learn-box { background: var(--card-bg); padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); text-align: center; }
+        .learn-dish-name { font-size: 1.4rem; color: var(--primary-dark); font-weight: bold; margin-bottom: 15px; }
+        .learn-ingredients-display { font-size: 1.1rem; line-height: 1.6; text-align: left; background: #fdf6f0; padding: 20px; border-radius: 10px; margin-bottom: 20px; border-left: 4px solid var(--primary); }
+        .blank { display: inline-block; min-width: 100px; border-bottom: 2px dashed var(--primary-dark); color: var(--primary-dark); font-weight: bold; text-align: center; margin: 0 4px; background: rgba(212, 165, 165, 0.1); border-radius: 4px; }
+        .blank.filled { min-width: 0; padding: 0 4px; border-bottom-style: solid; color: var(--success); border-bottom-color: var(--success); background: #eaf5eb; }
 
-  /* Эффекты наведения — только там, где есть мышь: на телефоне они «залипают» после касания */
-  @media (hover:hover){
-    .primary:hover{transform:translateY(-2px);filter:brightness(1.06)}
-    .micro-btn:hover{transform:translateY(-2px);filter:brightness(1.1)}
-    .secondary:hover{background:#ffffff18;opacity:1}
-    .hint-button:hover:not(:disabled){background:#fcf0dd}
-    .category:hover{background:var(--gold);border-color:var(--gold);color:var(--ink)}
-    .tag-option:hover:not(:disabled):not(.selected){border-color:var(--accent);background:#fcf5e9}
-    .answer:hover:not(:disabled){transform:translateY(-2px);border-color:var(--accent);background:#fcf5e9}
-  }
-  @media (min-width:640px){
-    .app-shell,.game-board{padding:2rem}
-    .surface{padding:1.75rem}
-    .hero-mark{font-size:3.75rem}
-    .actions,.results-actions{flex-direction:row}
-    .game-actions > button,.game-actions > #next{flex:none;order:0}
-  }
-  @media (max-width:639.98px){.game-board{border-radius:22px}.answer{min-height:58px}}
-  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
-</style>
+        .options-grid { display: grid; gap: 10px; margin-top: 20px; }
+        .option-btn { text-align: left; padding: 15px; border: 2px solid #eee; background: white; border-radius: 8px; cursor: pointer; transition: 0.2s; font-size: 0.95rem; line-height: 1.4; color: var(--text); }
+        .option-btn.correct { background: var(--success); color: white; border-color: var(--success); }
+        .option-btn.wrong { background: var(--error); color: white; border-color: var(--error); }
+        .option-btn:disabled { cursor: default; }
+        .option-btn:disabled:not(.correct):not(.wrong) { opacity: 0.6; }
 
-<div class="app-shell" lang="ru">
-  <div class="game-board" aria-label="Игровая панель">
+        .learn-feedback { margin-top: 20px; font-weight: bold; font-size: 1.1rem; min-height: 30px; }
+        .hint-text { color: var(--primary-dark); font-style: italic; margin-top: 10px; font-size: 0.95rem; display: none; background: #fff3cd; padding: 10px; border-radius: 8px; }
+        .btn-hint { background: var(--accent); color: var(--text); border-color: var(--accent); margin-top: 10px; font-size: 0.9rem; }
 
-    <!-- Экран настройки -->
-    <div id="setup" class="screen appear">
-      <div class="row-between">
-        <p class="eyebrow c-gold">Обучение составу блюд</p>
-        <span id="mastery-stats" class="stamp stamp-sm">Загрузка статистики...</span>
-      </div>
-      <div class="intro">
-        <span class="hero-mark" aria-hidden="true">✦</span>
-        <h2 class="title">Блиц по меню</h2>
-        <p class="lead">Выбери раздел или запусти умную тренировку. Система запомнит твои ошибки и будет повторять их в нужный момент.</p>
-      </div>
+        /* Подбор */
+        .match-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
+        .match-item { padding: 12px; background: var(--card-bg); border: 2px solid var(--primary); border-radius: 8px; text-align: center; cursor: pointer; transition: 0.2s; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; min-height: 72px; -webkit-tap-highlight-color: transparent; }
+        .match-item.selected { background: var(--accent); border-color: var(--accent); color: var(--text); }
+        .match-item.miss { border-color: var(--error); }
+        .match-item.matched { visibility: hidden; }
+        .match-timer { text-align: center; font-size: 1.5rem; font-weight: bold; color: var(--primary-dark); margin-bottom: 10px; font-variant-numeric: tabular-nums; }
+        .match-note { text-align: center; color: var(--text-light); font-size: 0.9rem; }
 
-      <p class="label">Раздел меню</p>
-      <div id="categories" class="categories" role="group" aria-label="Раздел меню">
-        <button type="button" class="category" data-category="all" aria-pressed="true">Все разделы</button>
-        <button type="button" class="category" data-category="Холодные закуски" aria-pressed="false">Холодные закуски</button>
-        <button type="button" class="category" data-category="Салаты" aria-pressed="false">Салаты</button>
-        <button type="button" class="category" data-category="Горячие блюда" aria-pressed="false">Горячие блюда</button>
-        <button type="button" class="category" data-category="Десерты" aria-pressed="false">Десерты</button>
-      </div>
+        /* Официант */
+        .waiter-box { background: var(--card-bg); padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .waiter-avatar { font-size: 3rem; text-align: center; margin-bottom: 10px; }
+        .waiter-speech { background: #f0f4f8; padding: 20px; border-radius: 15px; border-bottom-left-radius: 2px; margin-bottom: 20px; font-size: 1.1rem; line-height: 1.5; position: relative; }
+        .waiter-speech::after { content: ''; position: absolute; bottom: -10px; left: 20px; border-width: 10px 10px 0; border-style: solid; border-color: #f0f4f8 transparent; }
 
-      <div class="actions">
-        <button id="start" type="button" class="primary">Начать тренировку (10 вопросов)</button>
-        <button id="micro-start" type="button" class="micro-btn"><span aria-hidden="true">⚡</span> Микро-сессия (5 мин)</button>
-      </div>
-      <button id="reset-progress" type="button" class="secondary reset">Сбросить весь прогресс обучения</button>
-    </div>
+        .stats { text-align: center; margin-top: 20px; color: var(--text-light); font-size: 0.9rem; }
+        .footer { text-align: center; margin-top: 36px; font-size: 0.9rem; }
+        .footer a { color: var(--primary-dark); }
 
-    <!-- Экран игры -->
-    <div id="game" class="screen appear hidden">
-      <div class="game-top ui">
-        <span id="position" aria-live="polite"></span>
-        <div class="stamps">
-          <span id="streak" class="stamp"></span>
-          <span id="score" class="stamp"></span>
+        /* Эффекты наведения — только там, где есть мышь: на телефоне они «залипают» после касания */
+        @media (hover: hover) {
+            button:not(.option-btn):not(.btn-know):not(.btn-learn):not(.btn-hint):hover, select:hover { background: var(--primary); color: white; }
+            .btn-know:hover, .btn-learn:hover, .btn-hint:hover { filter: brightness(0.94); }
+            .option-btn:hover:not(:disabled) { border-color: var(--primary); background: #fdf6f0; }
+            .match-item:hover:not(.selected) { background: var(--bg-color); }
+        }
+
+        @media (max-width: 600px) {
+            body { padding: 14px; }
+            h1 { font-size: 1.5rem; }
+            .controls { align-items: stretch; }
+            .mode-switch { display: grid; grid-template-columns: 1fr 1fr; }
+            .flashcard { min-height: 340px; }
+            .card-face { padding: 20px; }
+            .card-title { font-size: 1.3rem; }
+            .nav-label { display: none; }
+            .card-controls .nav-btn { min-width: 52px; }
+            .learn-box, .waiter-box { padding: 18px; }
+            .learn-ingredients-display { font-size: 1rem; padding: 15px; }
+            .match-item { font-size: 0.88rem; padding: 10px; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { transition-duration: 0.01ms !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🦆 Утка в Котелке: Тренажёр</h1>
+
+    <div class="controls">
+        <select id="categoryFilter" onchange="changeCategory()" aria-label="Раздел меню">
+            <option value="all">Все категории</option>
+            <option value="Хлебная корзина">Хлебная корзина</option>
+            <option value="Холодные закуски">Холодные закуски</option>
+            <option value="Салаты">Салаты</option>
+            <option value="Горячие закуски">Горячие закуски</option>
+            <option value="Супы">Супы</option>
+            <option value="Гриль">Гриль</option>
+            <option value="Гарниры">Гарниры</option>
+            <option value="Горячие блюда">Горячие блюда</option>
+            <option value="Десерты">Десерты</option>
+        </select>
+        <div class="mode-switch">
+            <button type="button" class="mode-btn active" onclick="setMode('flashcards', this)">📇 Карточки</button>
+            <button type="button" class="mode-btn" onclick="setMode('learn', this)">🧠 Заучивание (Пропуски)</button>
+            <button type="button" class="mode-btn" onclick="setMode('match', this)">⚡ Подбор</button>
+            <button type="button" class="mode-btn" onclick="setMode('waiter', this)">🤵 Официант</button>
         </div>
-      </div>
-      <div id="progress" class="progress-track" role="progressbar" aria-label="Прогресс раунда" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0">
-        <div id="progress-fill" class="progress-fill"></div>
-      </div>
+    </div>
 
-      <div class="surface">
-        <p id="question-type" class="eyebrow c-accent q-type"></p>
-        <h2 id="question" class="question"></h2>
+    <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+        <div class="progress-text" id="progressText">0% выучено</div>
+    </div>
 
-        <!-- Варианты ответа (генерируются скриптом) -->
-        <div id="choices" class="choices-list"></div>
-
-        <!-- Кнопка проверки для режима «Собери состав» -->
-        <button id="check-constructor" type="button" class="primary check hidden">Проверить состав</button>
-
-        <div id="feedback" class="feedback hidden" aria-live="polite">
-          <strong id="feedback-title" class="ui feedback-title"></strong>
-          <div id="feedback-detail" class="feedback-detail"></div>
+    <!-- Карточки -->
+    <div id="mode-flashcards" class="mode-container active">
+        <div class="flashcard-scene" id="flashcard-scene" onclick="flipCard()" tabindex="0" role="button" aria-label="Перевернуть карточку">
+            <div class="flashcard" id="flashcard">
+                <div class="card-face card-front">
+                    <div class="card-category" id="fc-category">Категория</div>
+                    <div class="card-title" id="fc-name">Название блюда</div>
+                    <div class="card-hint">(нажми, чтобы перевернуть)</div>
+                    <div class="card-status" id="fc-status" hidden></div>
+                </div>
+                <div class="card-face card-back">
+                    <div class="card-category" id="fc-back-category">Категория</div>
+                    <div class="card-title" id="fc-back-name" style="font-size: 1.2rem;">Название блюда</div>
+                    <div class="card-ingredients" id="fc-ingredients">Состав</div>
+                    <div class="card-allergens" id="fc-allergens" hidden></div>
+                    <div class="card-notes" id="fc-notes" hidden></div>
+                </div>
+            </div>
         </div>
-      </div>
-
-      <div class="game-actions">
-        <button id="hint" type="button" class="hint-button ui">💡 Помощь шефа (−100 очков)</button>
-        <button id="next" type="button" class="primary hidden">Далее →</button>
-        <button id="menu-from-game" type="button" class="secondary">В меню</button>
-      </div>
+        <div class="card-controls">
+            <button type="button" class="nav-btn" onclick="prevCard()" aria-label="Назад">←<span class="nav-label"> Назад</span></button>
+            <button type="button" class="btn-learn" onclick="markCard('learning')">🔄 Учу</button>
+            <button type="button" class="btn-know" onclick="markCard('known')">✅ Знаю</button>
+            <button type="button" class="nav-btn" onclick="nextCard()" aria-label="Вперёд"><span class="nav-label">Вперёд </span>→</button>
+        </div>
+        <div class="stats" id="fc-stats"></div>
     </div>
 
-    <!-- Экран результатов -->
-    <div id="results" class="screen appear hidden results">
-      <p class="eyebrow c-gold results-eyebrow">Раунд завершен</p>
-      <div class="results-mark" aria-hidden="true">✷</div>
-      <h2 class="results-title">Твой результат</h2>
-      <p id="result-count" class="result-count" aria-live="polite"></p>
-      <p id="result-score" class="result-score"></p>
-      <p id="result-message" class="result-message"></p>
-
-      <div class="results-actions">
-        <button id="retry" type="button" class="primary hidden">Повторить ошибки</button>
-        <button id="restart" type="button" class="secondary">Новый раунд</button>
-        <button id="menu-from-results" type="button" class="secondary">В главное меню</button>
-      </div>
+    <!-- Заучивание (пропуски) -->
+    <div id="mode-learn" class="mode-container">
+        <div class="learn-box" id="learn-box">
+            <div class="learn-dish-name" id="learn-dish-name">Название блюда</div>
+            <div class="learn-ingredients-display" id="learn-ingredients-display">
+                Здесь будет отображаться полный состав с пропуском _____
+            </div>
+            <div class="options-grid" id="learn-options"></div>
+            <button type="button" class="btn-hint" onclick="showHint()" id="learn-hint-btn" style="display: none;">💡 Показать подсказку</button>
+            <div class="hint-text" id="learn-hint"></div>
+            <div class="learn-feedback" id="learn-feedback" aria-live="polite"></div>
+            <button type="button" onclick="nextLearnQuestion()" style="margin-top: 20px; display: none;" id="learn-next-btn">Следующий вопрос →</button>
+        </div>
     </div>
 
-  </div>
-</div>
+    <!-- Подбор -->
+    <div id="mode-match" class="mode-container">
+        <div class="match-timer" id="match-timer" aria-live="polite">60</div>
+        <p class="match-note">Соедини блюдо с его аллергеном или ингредиентом</p>
+        <div class="match-grid" id="match-grid"></div>
+        <div style="text-align: center; margin-top: 20px;">
+            <button type="button" onclick="startMatchGame()">🔄 Начать заново</button>
+        </div>
+    </div>
+
+    <!-- Официант -->
+    <div id="mode-waiter" class="mode-container">
+        <div class="waiter-box" id="waiter-box">
+            <div class="waiter-avatar">🤵‍♂️</div>
+            <div class="waiter-speech" id="waiter-speech">Здравствуйте! Подскажите, пожалуйста...</div>
+            <div class="options-grid" id="waiter-options"></div>
+            <div class="learn-feedback" id="waiter-feedback" aria-live="polite"></div>
+            <button type="button" onclick="nextWaiterQuestion()" style="margin-top: 20px; display: none;" id="waiter-next-btn">Следующий гость →</button>
+        </div>
+    </div>
+
+    <footer class="footer"><a href="blic.html">⚡ Блиц по меню — прошлая версия (11 блюд)</a></footer>
 
 <script>
-  // === 1. ДАННЫЕ ===
-  // Формат: [раздел, название, описание, вопрос-деталь, правильный ответ, неверный А, неверный Б, [ключевые ингредиенты]]
-  const dishes = [
-    ["Холодные закуски","Террин из фуа-гра","Террин из фуа-гра подают с хрустящими тостами, апельсиновым джемом, ягодами и малиновым соусом. При подаче добавляют немного арманьяка.","Какой напиток добавляют к террину при подаче?","Немного арманьяка","Тёмный ром","Виски", ["фуа-гра", "хрустящие тосты", "апельсиновый джем", "ягоды", "малиновый соус", "арманьяк"]],
-    ["Холодные закуски","Сырное плато","Сыры Мартелло, Мариджано, Качотта с лисичками, Дор Блю и Камамбер. Подают с мёдом, ягодами, виноградом и грецкими орехами.","Какие орехи подают к сырному плато?","Грецкие","Кедровые","Фисташки", ["Мартелло", "Мариджано", "Качотта с лисичками", "Дор Блю", "Камамбер", "мёд", "ягоды", "виноград", "грецкие орехи"]],
-    ["Холодные закуски","Тартар из говядины","Говядина, красный лук и шалот, корнишоны, каперсы, горчица, домашний майонез и табаско. Подают на тостах с эскалопом из фуа-гра сверху.","Что выкладывают поверх тартара?","Эскалоп из фуа-гра","Красную икру","Крем-чиз", ["говядина", "красный лук", "шалот", "корнишоны", "каперсы", "горчица", "домашний майонез", "табаско", "тосты", "эскалоп из фуа-гра"]],
-    ["Салаты","Микс с уткой и грушей","Микс салата, руккола и груша с облепиховым соусом и бальзамическим соусом. Добавляют рикотту и обжаренную утиную грудку, приготовленную сувид перед обжаркой.","Как готовят утиную грудку перед обжаркой?","Сувид","Во фритюре","Горячим копчением", ["микс салата", "руккола", "груша", "облепиховый соус", "бальзамический соус", "рикотта", "утиная грудка сувид"]],
-    ["Салаты","Трио оливье","Классическое оливье выкладывают «шайбочками», дополняют ростбифом из конины снизу, слабосолёным лососем и ростбифом из утиной грудки. Сверху кладут слайс редиса.","Что кладут сверху на часть с лососем?","Красную икру","Кедровые орехи","Фуа-гра", ["оливье", "ростбиф из конины", "слабосолёный лосось", "ростбиф из утиной грудки", "редис", "перепелиное яйцо", "красная икра"]],
-    ["Салаты","Цезарь с курицей/креветками","Романо, томаты черри и гренки с выбранной курицей или креветками. Соус: домашний майонез, каперсы, бальзамик, чеснок, анчоусы, ворчестер и пармезан.","Какая рыба входит в соус «Цезарь»?","Анчоусы","Судак","Палтус", ["романо", "томаты черри", "гренки", "курица или креветки", "майонез", "каперсы", "бальзамик", "чеснок", "анчоусы", "ворчестер", "пармезан"]],
-    ["Горячие блюда","Утка по-пекински","В первый день утку надувают и наполняют соусом хойсин со специями. На третий день покрывают карамелью из соевого соуса, мёда и специй, коптят на яблочной щепе. Подают с императорскими блинчиками.","Что показывают гостям до разделки и подачи?","Готовую утку целиком","Только блинчики","Только соус хойсин", ["утка", "соус хойсин", "гвоздика", "корица", "бадьян", "кайенский перец", "карамель из соевого соуса и мёда", "яблочная щепа", "императорские блинчики", "огурец", "дайкон", "лук"]],
-    ["Горячие блюда","Утиная грудка с яблочным круассаном","Утиную грудку без кожи готовят сувид и обжаривают на гриле. Яблоко сворачивают тонкой лентой в форме круассана и запекают с корицей, мёдом и сливочным маслом.","Из чего сделан «круассан» в гарнире?","Из тонкой ленты яблока","Из слоёного теста","Из картофельного пюре", ["утиная грудка", "сувид", "яблоко", "корица", "мёд", "сливочное масло", "малиновый соус", "свежие ягоды", "соус порто"]],
-    ["Горячие блюда","Турнедо Россини","Бездрожжевой тост и трюфельную пасту обжаривают в соусе из топлёной фуа-гра. На хлеб кладут пасту, обжаренную конину, жареную фуа-гра, соус порто и слайс маринованного трюфеля.","Какое мясо кладут на тост?","Конину","Ягнёнка","Куриную грудку", ["бездрожжевой тост", "трюфельная паста", "топлёная фуа-гра", "обжаренная конина", "жареная фуа-гра", "соус порто", "маринованный трюфель"]],
-    ["Десерты","Крем-чиз по-Казански","Основа: печенье со сливочным маслом, крем-чиз, сливки. Внутри курага, вымоченная в настойке «Бугульма», чернослив в тёмном роме, сметана и корт.","В чём вымачивают курагу?","В настойке «Бугульма»","В соусе порто","В лимонном соке", ["печенье", "сливочное масло", "крем-чиз", "сливки", "курага в настойке Бугульма", "чернослив в роме", "сметана", "корт", "сахарная пудра"]],
-    ["Десерты","Графские развалины","Миндальное безе, шоколадный и заварной кремы, малиновый соус, чернослив, вымоченный в роме, орехи и свежие ягоды.","В чём вымачивают чернослив?","В роме","В белом вине","В апельсиновом соке", ["миндальное безе", "шоколадный крем", "заварной крем", "малиновый соус", "чернослив в роме", "орехи", "свежие ягоды"]]
-  ];
+// === ДАННЫЕ МЕНЮ (строго как в исходном документе) ===
+const menuData = [
+  {"category": "Хлебная корзина", "name": "Французский багет, рижский хлеб, бездрожжевой, гриссини", "ingredients": "Французский багет, рижский хлеб(тёмный) с семечками и изюмом, бездрожжевой на закваске, палочки гриссини с жареным луком. Подаём с 3 видами закусок(песто, оливковое масло с оливками и артишоки). Бездрожжевой: Хлеб на закваске, соль, вода, мука. Багет: Мука ржаная и пшеничная с отрубями, соль, вода. Рижский: Подсолнечные семена, изюм, мука ржаная, дрожжи, вода, рижская паста(содержит тмин, кориандр и солод).", "allergens": [], "special_notes": ""},
+  {"category": "Холодные закуски", "name": "Овощное ассорти", "ingredients": "Бакинские томаты, бакинские огурцы, перец болгарский, зелень, редис, дайкон, сельдерей.", "allergens": ["Сельдерей"], "special_notes": ""},
+  {"category": "Холодные закуски", "name": "Тёщины соленья", "ingredients": "Квашеная капуста, острая капуста, огурцы и помидоры – всё собственного посола.", "allergens": [], "special_notes": ""},
+  {"category": "Холодные закуски", "name": "Грузди в сметане", "ingredients": "Сметана перемешивается с груздями. Добавляется красный лук замешанный в зеленом масле. Сверху добавляется зеленое масло, петрушка, укроп. Подается с двумя пампушками из рижского хлеба.", "allergens": ["Грибы", "Лактоза"], "special_notes": ""},
+  {"category": "Холодные закуски", "name": "Сельдь с молодым картофелем", "ingredients": "Сельдь собственного посола, бейби картофель, маринованный красный лук, укроп, петрушка.", "allergens": ["Рыба"], "special_notes": ""},
+  {"category": "Холодные закуски", "name": "Террин из фуа-гра", "ingredients": "Фуа-гра. Подаётся с хрустящими тостами, апельсиновым джемом(Сегмент апельсина, цедра, фреш лимона, сахар, агар-агар варится с палкой корицы), ягодами и малиновым соусом(малина, сахар), при подаче капаем небольшим количеством арманьяка.", "allergens": ["Цитрусы", "Глютен"], "special_notes": "При запекании выделяется жир, желтого цвета на самом брикете."},
+  {"category": "Холодные закуски", "name": "Сырное плато", "ingredients": "Мартелло(козий), Мариджано, Качотта с лисичками, Дор Блю, Камамбер. Подаётся с мёдом, ягодами, виноградом и грецкими орехами.", "allergens": ["Мёд", "Лактоза", "Орехи"], "special_notes": ""},
+  {"category": "Холодные закуски", "name": "Мясное плато от Шефа", "ingredients": "Говяжий язык отварной, Вырезка из конины, Сыровяленая утиная грудка, Казылык, Конская грива(маринованная с паприкой и чесноком). Подаётся с Мацони(творог с чесноком и зеленью).", "allergens": ["Лактоза", "Чеснок"], "special_notes": "Мясо должно подаваться холодным."},
+  {"category": "Холодные закуски", "name": "Паштет из утки", "ingredients": "Паштет: ут. печень(куриная), лук, сливочное масло, сливки. Дополняется яблочным пюре и колотым фундуком в карамели, Тосты б/д хлеба.", "allergens": ["Лактоза", "Орех", "Глютен"], "special_notes": ""},
+  {"category": "Холодные закуски", "name": "Хамон по-татарстански из гуся с сальсой из томатов", "ingredients": "Гусь с/в, тосты из б/д хлеба, конкассе из томатов.", "allergens": ["Глютен"], "special_notes": "Используется бедро и грудка, бедро более темное, жирное, ароматное."},
+  {"category": "Холодные закуски", "name": "Хамон по-татарстански из утки с фуа-гра", "ingredients": "Утиная грудка фаршированная фуа-гра сыровяленая, дыня, микс салата с рукколой и клубникой.", "allergens": [], "special_notes": "Утка по центру немного прорезается в обе стороны. Фуагра заполняет весь разрез, отваривается в лавровом листе, засаливается на сутки. Промывается, потом сушится."},
+  {"category": "Холодные закуски", "name": "Тартар из говядины", "ingredients": "Говядина, красный лук, лук шалот, корнишоны, каперсы, горчица, домашний майонез, табаско. Подаётся на тостах, на тартар выкладываем эскалоп из фуа-гра.", "allergens": ["Майонез", "Глютен", "Горчица"], "special_notes": "Сок жареной фуа-гра пропитывает тартар. Лёгкая пикантность от табаско."},
+  {"category": "Холодные закуски", "name": "Татаки из лосося", "ingredients": "Гуакамоле(авокадо, оливковое масло, красный лук, огурец, мята, табаско), опаленный лосось, заправляем соусом татаки(оливковое, растительное масло, лимонный сок), соусом юдзу, кунжутным маслом. Украшается кунжутом, кимчи и микрозеленью.", "allergens": ["Рыба", "Цитрус"], "special_notes": ""},
+  {"category": "Холодные закуски", "name": "Карпаччо из тунца", "ingredients": "Гуакамоле, сегмент апельсина и грейпфрута, пласт отбитого тунца, заправляется понзу, юдзу, татаки, украшается мелко нарезанным редисом и микрозеленью.", "allergens": ["Рыба", "Цитрус"], "special_notes": ""},
+  {"category": "Холодные закуски", "name": "Фруктовая тарелка", "ingredients": "Гранат, ананас, груша, апельсин, клубника, сезонный фрукт.", "allergens": ["Цитрус"], "special_notes": ""},
+  {"category": "Салаты", "name": "Микс с уткой и грушей", "ingredients": "Микс салата, руккола, груша, заправляется облепиховым(облепиха, сахар, вино, виски, чеснок, крахмал, мед) и бальзамическим соусами, рикотта, обжаренная утиная грудка.", "allergens": [], "special_notes": "Перед обжаркой утиная грудка готовится сувид."},
+  {"category": "Салаты", "name": "Салат с утиной печенью", "ingredients": "Жареная в муке куриная печень, жареные грибы вешенки, микс салатов с рукколой, заправляется малиновым майонезом, украшается вялеными томатами и кедровыми орехами.", "allergens": ["Майонез", "Орехи", "Грибы"], "special_notes": ""},
+  {"category": "Салаты", "name": "Трио оливье", "ingredients": "Классическое оливье шайбочками. Дополняется ростбифом из конины(снизу), с/с лососем и ростбиф утиной грудки. Сверху слайс редиски, мясные половинка перепел. яйца, на лосось красная икра.", "allergens": ["Майонез", "Рыба", "Яйца"], "special_notes": ""},
+  {"category": "Салаты", "name": "Салат Микс с кониной", "ingredients": "Вырезка конины обжаренная на гриле, микс салатов, томаты черри, редис, перепелиное яйцо, заправляется оливковым маслом, бальзамиком, сверху посыпается тёртым выдержанным сыром.", "allergens": ["Лактоза", "Яйца"], "special_notes": ""},
+  {"category": "Салаты", "name": "Теплый салат с осьминогом", "ingredients": "Осьминог су-вид(обжаривается с оливковым маслом, тимьяном, картофелем и авокадо). Микс салатов, артишок в кукурузном крахмале обжаренный во фритюре, томаты. Заправляем майонезом с понзу(соевый, стружка тунца, оливк. масло, фреш лимона, ворчестр). Украшаем красной икрой.", "allergens": ["Морепродукты", "Майонез", "Цитрусы", "Глютен"], "special_notes": ""},
+  {"category": "Салаты", "name": "Цезарь с курицей/креветками", "ingredients": "Романо, томаты черри, гренки, соус цезарь(домашний майонез, каперсы, бальзамик, чеснок, анчоусы, ворчестер, пармезан).", "allergens": ["Майонез", "Морепродукты", "Лактоза", "Глютен"], "special_notes": "В маринаде на гренки много паприки, сами гренки очень яркие, цена обусловлена наличием настоящих анчоусов в соусе."},
+  {"category": "Салаты", "name": "Вителло утка", "ingredients": "Соус вителло(майонез, каперсы, анчоусы, ворчестер, бальзамический уксус, соевый соус и консервированный тунец), микс салата и рукколы, вяленые томаты и большие каперсы на ветке, ростбиф из утки, поливаем зеленым маслом и украшаем землей маслин.", "allergens": ["Майонез", "Морепродукты", "Глютен"], "special_notes": ""},
+  {"category": "Салаты", "name": "Нисуаз с тунцом", "ingredients": "Мини-картофель(жареный), томаты, микс салатов, стручковая фасоль, болгарский перец, красный лук, анчоусы, заправляется уксусно-горчично-бальзамическим соусом, сверху яйцо всмятку и rare тунец с кунжутом.", "allergens": ["Морепродукты", "Горчица", "Яйца"], "special_notes": "Отличие от классического в использовании тунца не консерв, используются действительно анчоусы."},
+  {"category": "Салаты", "name": "Салат Панцанелла с креветками", "ingredients": "Жареные тигровые креветки, томаты, авокадо, гренки, красный лук, таджасские маслины, базилик. Заправляем оливковым маслом и бальзамиком.", "allergens": ["Морепродукты", "Глютен"], "special_notes": "Смысл салата чтобы гренки впитали в себя сок томатов и заправку."},
+  {"category": "Салаты", "name": "Салат с бакинскими овощами и сыром Фета", "ingredients": "Помидоры, огурцы, болгарский перец, сыр Фета, редис, каперсы, кинза, укроп, петрушка, бальзамик.", "allergens": ["Лактоза"], "special_notes": ""},
+  {"category": "Салаты", "name": "Салат с хрустящими баклажанами", "ingredients": "Хрустящие баклажаны в кукурузном крахмале обжариваются во фритюре, томаты Черри, сыр Фета, заправляется сладким чили, соевым соусом, кунжутным маслом, кинза, укроп, петрушка.", "allergens": ["Лактоза", "Глютен"], "special_notes": ""},
+  {"category": "Салаты", "name": "Зелёный салат", "ingredients": "Авокадо, цуккини, яблоко, груша, руккола, шпинат, микс салат, бобы эдамаме, тыквенные семечки, кинза, укроп, петрушка, мята. Заправляется зелёным соусом(овощной бульон, пробитый шпинат).", "allergens": ["Бобы", "Лактоза"], "special_notes": "В соусе есть сливочное масло, в связи с чем салат не веган, можно сделать заправку только оливковым маслом."},
+  {"category": "Горячие закуски", "name": "Баклажан в сливочном соусе", "ingredients": "Цельный баклажан, очищенный от кожуры, панируем в кукурузном крахмале, обжариваем во фритюре, поливаем сливочным соусом(томаты черри, чеснок, сливки), добавляем зелень и дэш зеленого масла.", "allergens": ["Чеснок", "Лактоза"], "special_notes": ""},
+  {"category": "Горячие закуски", "name": "Эскалоп из утиной печени фуа-гра", "ingredients": "Обжаренная фуа-гра, яблоко в карамели с добавлением пряностей(гвоздика, бадьян, корица), подаётся со свежими ягодами и малиновым соусом(малина, сахар).", "allergens": [], "special_notes": "Эскалоп из фуа-гра обжаривается в легкой панировке из муки, чтобы сохранять соки."},
+  {"category": "Горячие закуски", "name": "Эчпочмаки с уткой и кониной", "ingredients": "Классические треугольники с мелко нарезанными луком, картошкой и мясом Утка/Конина. Подаются с жареным луком порей.", "allergens": ["Глютен"], "special_notes": ""},
+  {"category": "Горячие закуски", "name": "Запеченный камамбер с грушей глинтвейн", "ingredients": "Сыр камамбер в миндально-фисташковой панировке запекается. Груша варится в глинтвейне с вином, сахаром, корицей, бадьяном и гвоздикой, выкладывается на камамбер, подаётся со свежими ягодами и малиновым соусом.", "allergens": ["Лактоза", "Орехи", "Вино"], "special_notes": ""},
+  {"category": "Горячие закуски", "name": "Кыстыбый с красной икрой", "ingredients": "Пресные лепешки обжариваются на сухой сковороде, внутри картофельное пюре с жаренным луком. Отдельно подаётся красная икра.", "allergens": ["Глютен", "Икра", "Лактоза"], "special_notes": "Лук томленый, 3 часа в кастрюле со сливочным маслом."},
+  {"category": "Горячие закуски", "name": "Бри с трюфелем", "ingredients": "Сыр бри с начинкой из маскарпоне и креметты с трюфельной пастой слегка запекаем под саламандром. Подаём с инжирным джемом и обжаренным б/д хлебом.", "allergens": ["Лактоза", "Глютен"], "special_notes": ""},
+  {"category": "Супы", "name": "Домашний суп с уткой", "ingredients": "Наваристый утиный бульон, утиное мясо, картофель, морковь, томаты, цукини, цветная капуста, корень сельдерея, репчатый лук, демигляс, свежая зелень. Подаётся с бутербродом с утиным паштетом.", "allergens": ["Сельдерей", "Вино", "Глютен", "Лактоза"], "special_notes": ""},
+  {"category": "Супы", "name": "Уха из петуха", "ingredients": "Готовится на курином бульоне, с картофелем, томатами и луком, судак, лосось, палтус, зелень.", "allergens": ["Рыба"], "special_notes": ""},
+  {"category": "Супы", "name": "Суп из конины с овощами", "ingredients": "Готовится 1 в 1 как и домашний с уткой, разница – бульон говяжий, мясо конское.", "allergens": ["Сельдерей", "Вино", "Глютен", "Лактоза"], "special_notes": ""},
+  {"category": "Супы", "name": "Традиционные кислые щи", "ingredients": "Говяжьи щеки, квашенная капуста, говяжий бульон, морковь, лук, подаем со сметаной (отдельно) и зеленью.", "allergens": ["Лактоза"], "special_notes": ""},
+  {"category": "Супы", "name": "Марсельская уха", "ingredients": "Французский рецепт ухи из рыбного бульона, томатов конкассе, дорадо, лосось, мидии, вонголе, тигровые креветки, лемонграсс, чили, базилик. Подаём с поджаренным тостом.", "allergens": ["Морепродукты", "Глютен"], "special_notes": "Пикантный суп из-за перца."},
+  {"category": "Супы", "name": "Крем-суп из тыквы", "ingredients": "Крем-суп из тыквы, картофеля, моркови, лука со сливками. Подаём с тыквенными семечками, гренками.", "allergens": ["Лактоза", "Глютен"], "special_notes": ""},
+  {"category": "Гриль", "name": "Стейк Рибай", "ingredients": "Стейк из говяжьего отруба с 5 по 12 ребро. 200 дней зернового откорма. Обжариваем с чесноком и розмарином.", "allergens": ["Чеснок"], "special_notes": "Все тарелки из вкладки гриль украшаются томатами черри, песто, бальзамиком и острым перцем."},
+  {"category": "Гриль", "name": "Стейк стриплойн", "ingredients": "Вырезка из поясничного отдела говядины с характерной жировой прослойкой. 200 дней зернового откорма. Обжариваем с чесноком и розмарином.", "allergens": ["Чеснок"], "special_notes": ""},
+  {"category": "Гриль", "name": "Филе миньон", "ingredients": "Стейк из говяжьей вырезки. Фермерское мясо из Татарстана.", "allergens": [], "special_notes": ""},
+  {"category": "Гриль", "name": "Стейк из конины", "ingredients": "Аналог филе миньона у конины. Богат витаминами и аминокислотами.", "allergens": [], "special_notes": "Рекомендуемая прожарка – medium."},
+  {"category": "Гриль", "name": "Каре ягнёнка", "ingredients": "Дагестанский ягнёнок, рёбрышки маринуем горчицей, чесноком, розмарином.", "allergens": ["Горчица", "Чеснок"], "special_notes": ""},
+  {"category": "Гриль", "name": "Утиный стейк", "ingredients": "Утиная грудка с кожей(оставляем чтобы при обжаривании сок меньше выпаривался).", "allergens": [], "special_notes": "Рекомендуемая прожарка – medium. Рекомендуется с брусничным соусом."},
+  {"category": "Гриль", "name": "Стейк Лосось", "ingredients": "Мурманский лосось.", "allergens": ["Рыба"], "special_notes": ""},
+  {"category": "Гарниры", "name": "Картофель фри с пармезаном", "ingredients": "Картофель фри жареный во фритюре, щедро присыпанный пармезаном.", "allergens": ["Лактоза"], "special_notes": ""},
+  {"category": "Гарниры", "name": "Овощи гриль", "ingredients": "Грибы вешенки, помидоры, цукини, баклажан, болгарский перец, стручковая фасоль.", "allergens": ["Грибы"], "special_notes": ""},
+  {"category": "Гарниры", "name": "Запеченный картофель с трюфелем", "ingredients": "Внутренности картофеля вынимают, обжаривают в сливках с трюфельной пастой, вкладывают обратно, запекают с шапкой из выдержанного пармезана.", "allergens": ["Лактоза"], "special_notes": "Трюфель."},
+  {"category": "Гарниры", "name": "Батат фри с пармезаном", "ingredients": "Батат во фритюре, сверху тёртый пармезан.", "allergens": ["Лактоза"], "special_notes": ""},
+  {"category": "Гарниры", "name": "Жареный картофель с лесными грибами", "ingredients": "Картофель нарезаем слайсами, обжариваем во фритюре, выкладываем на сковороду с обжаренным луком и белыми грибами, посыпаем зеленью.", "allergens": ["Грибы"], "special_notes": ""},
+  {"category": "Горячие блюда", "name": "Утка по-пекински", "ingredients": "Утка, соус хойсин(гвоздика, корица, бадьян, каенский перец), соевый бульон, соево-медовая карамель, копчение на яблочной щепе. Отдельно подаём мясо с ножками, нарезанные овощи(огурец без кожицы и семечек, дайкон, лук), соус хойсин и императорские блинчики(на рисовой муке).", "allergens": ["Соя", "Мёд", "Глютен"], "special_notes": "Время приготовления 1-1.5 часа! Презентуем гостям внешний вид, предлагаем сфотографировать. Надеваем перчатки и показываем как правильно есть утку. Обязательно рассказать как наша утка готовится."},
+  {"category": "Горячие блюда", "name": "Утка с ананасами", "ingredients": "Утка, копченая на яблочной щепе. Ананас: кругляшки обжариваем на гриле, томим в карамели(мёд, тростниковый сахар, гвоздика, бадьян, корица, тёмный ром). Подаём со свежим апельсином, вареньем из чёрной смородины и соусом демигляс с цедрой и сегментами апельсина.", "allergens": ["Мёд", "Ром", "Цитрус", "Вино"], "special_notes": ""},
+  {"category": "Горячие блюда", "name": "Утиная грудка с фуа-гра и пюре из сельдерея", "ingredients": "Утиная грудка, фаршированная фуа-гра, запеченная в рулет. Пюре из сельдерея(корень сельдерея, сливки), земля из маслин, солёная карамель(тростниковый сахар, белое вино, фундук, яблоки, сельдерей, соль).", "allergens": ["Сельдерей", "Лактоза", "Вино", "Орехи"], "special_notes": ""},
+  {"category": "Горячие блюда", "name": "Утиная грудка с яблочным круассаном", "ingredients": "Утиная грудка су-вид без кожи, обжаренная на гриле. Яблоко в форме круассана, запеченное с корицей, мёдом, сливочным маслом, сахарная пудра. Малиновый соус, свежие ягоды, соус порто(демигляс, красное вино).", "allergens": ["Мёд", "Лактоза", "Вино"], "special_notes": "Предлагаем гостю сразу полить грудку."},
+  {"category": "Горячие блюда", "name": "Утиная ножка с орехами, овощами и полбой", "ingredients": "Утиная ножка, томленая в соусе порто с орехами(миндаль, фундук, грецкий орех), изюмом и черносливом. Гарнир: полба, перемешанная с обжаренными овощами(болгарский перец, цукини).", "allergens": ["Орехи", "Глютен", "Вино"], "special_notes": ""},
+  {"category": "Горячие блюда", "name": "Говяжья печень с гратеном", "ingredients": "Гратен(Картофель, сливки, чеддер, Деми гласс), посыпанный пармезаном. Говяжья печень су-вид, обжаренная, с томленым луком, жареным черри. Копченая сметана, микрозелень.", "allergens": ["Лактоза", "Вино"], "special_notes": ""},
+  {"category": "Горячие блюда", "name": "Куриная грудка с жареным картофелем и лесными грибами", "ingredients": "Куриная грудка на гриле, жареный картофель с лесными грибами. Соус блю-чиз(сливки, сыр с голубой плесенью, белое вино, розмарин).", "allergens": ["Лактоза", "Вино", "Грибы"], "special_notes": ""},
+  {"category": "Горячие блюда", "name": "Перепелка с овощами", "ingredients": "Перепелка с соусом терияки и тайский Чили. Овощи(болгарский перец, цукини, баклажан) жареные на оливковом и кунжутном масле. Виноградный соус(вишневый сок, ягоды винограда, деми гласс), лук порей, кунжут кимчи.", "allergens": ["Глютен", "Вино"], "special_notes": "Вишневый сок выпаривается до эмульсии практически до карамелизации."},
+  {"category": "Горячие блюда", "name": "Язык на гриле с запечёным картофелем", "ingredients": "Язык отварной, обжаренный на гриле. Запеченный картофель. Пучок зелени(укроп, петрушка) и сметанно-чесночный соус(сметана, чеснок, зелень).", "allergens": ["Лактоза", "Чеснок"], "special_notes": ""},
+  {"category": "Горячие блюда", "name": "Турнедо Россини", "ingredients": "Бездрожжевой тост и трюфельную пасту обжариваем в соусе из топленой фуа-гра. Кусок обжаренной конины, жаренная фуа-гра, соус порто, слайс маринованного трюфеля.", "allergens": ["Глютен", "Вино"], "special_notes": ""},
+  {"category": "Горячие блюда", "name": "Бефстроганов с гречкой и белыми грибами", "ingredients": "Говяжья вырезка жареная с луком в сливках. Гречка с обжаренным красным луком и белыми грибами. Солёный огурец, пучок зелени.", "allergens": ["Лактоза", "Грибы"], "special_notes": ""},
+  {"category": "Горячие блюда", "name": "Медальоны из говядины и конины с фуа-гра и кыстыбый", "ingredients": "Медальон из говядины, медальон из конины, между ними жаренная фуа-гра. Гарнир: кыстыбый(с пюре и луком), сметано-чесночный соус, пучок зелени.", "allergens": ["Глютен", "Лактоза", "Чеснок"], "special_notes": ""},
+  {"category": "Горячие блюда", "name": "Кижуч с овощами", "ingredients": "Кижуч, картофельное пюре со шпинатом, бланшированная брюссельская капуста обжаренная с чесноком и тимьяном. Соус на основе сливок с добавлением мяты, гороха и специй. Микрозелень.", "allergens": ["Морепродукты", "Чеснок", "Лактоза"], "special_notes": ""},
+  {"category": "Горячие блюда", "name": "Волжский судак с киноа", "ingredients": "Отварной киноа с томатным соусом(томленные томаты, прованские травы, базилик). Бобы эдамаме, судак жареный на оливковом и сливочном масле. Чипсы пармезана, микрозелень.", "allergens": ["Бобы", "Лактоза", "Морепродукты"], "special_notes": ""},
+  {"category": "Горячие блюда", "name": "Палтус с молодым шпинатом и икорным соусом", "ingredients": "Палтус копченый на яблочной щепе. Шпинат обжаренный с чесноком и сливками. Икорный соус(красная икра, черная икра палтуса, белое вино, сливки).", "allergens": ["Чеснок", "Лактоза", "Морепродукты", "Вино"], "special_notes": "Палтус горячего копчения. Предлагаем гостю полить палтуса соусом."},
+  {"category": "Десерты", "name": "Сорбет", "ingredients": "Замороженное с сахаром фруктовое или ягодное пюре. На выбор: малина, манго или лайм.(без сливок, с лимонной кислотой).", "allergens": ["Цитрус"], "special_notes": ""},
+  {"category": "Десерты", "name": "Брауни с пармезаном", "ingredients": "Брауни: шоколад белый, темный, яйца, сахар, масло сливочное, какао порошок, мука, фисташка. Сверху пломбир ванильный, топпинг шоколадный. При подаче трём пармезан.", "allergens": ["Лактоза", "Глютен", "Орехи", "Яйца"], "special_notes": ""},
+  {"category": "Десерты", "name": "Штрудель", "ingredients": "Десерт из слоёного теста с яблоками, изюмом, грецкими орехами и корицей. Подаём с шариком мороженного, малиновым соусом и свежими ягодами.", "allergens": ["Глютен", "Орехи", "Лактоза"], "special_notes": ""},
+  {"category": "Десерты", "name": "Черничный торт", "ingredients": "Бисквит пропитанный черничным сиропом, черника, бисквит, черничное пюре, заварной крем из вареной сгущенки, вафельная крошка, малиновый соус, ягоды.", "allergens": ["Глютен", "Лактоза"], "special_notes": ""},
+  {"category": "Десерты", "name": "Крем-чиз ягодный", "ingredients": "Песочное тесто(печенье со сливочным маслом), крем-чиз, сливки, сахар, ваниль. Свежие ягоды, малиновый соус.", "allergens": ["Глютен", "Лактоза"], "special_notes": ""},
+  {"category": "Десерты", "name": "Крем-чиз по-Казански", "ingredients": "Песочное тесто, крем-чиз. Внутри курага вымоченная в настойке Бугульма, чернослив вымоченный в тёмном роме, сметана, корт(запеченый солёный творог). Сверху сахарная пудра.", "allergens": ["Алкоголь", "Лактоза", "Глютен"], "special_notes": "Выносим гостям и обжигаем горелкой до появления карамельной корочки."},
+  {"category": "Десерты", "name": "Медовик", "ingredients": "Цветочный мед, сахар, мука, сода, масло сливочное(коржи). Крем: сметана и вареная сгущенка. Мороженое ванильное сверху. 24 слоя.", "allergens": ["Мёд", "Глютен", "Лактоза"], "special_notes": "Предлагаем гостям распределить мороженое по медовику и есть в сочетании. Подаём лежа."},
+  {"category": "Десерты", "name": "Графские развалины", "ingredients": "Миндальное безе(миндаль, белок, сахар), шоколадный и заварной крем, малиновый соус, чернослив вымоченный в роме, орехи, свежие ягоды.", "allergens": ["Орех", "Лактоза", "Ром"], "special_notes": ""},
+  {"category": "Десерты", "name": "И Зигфрид", "ingredients": "Дакуаз - шоколадный бисквит на миндальном молоке со сливочным маслом, суфле, вишня в сахаре с/м. Тёмный шоколад пульвелизатором. Малиновый соус, ягоды.", "allergens": ["Лактоза"], "special_notes": "Десерт назван в честь одного из лебедей, что жил на чёрном озере."},
+  {"category": "Десерты", "name": "Чак-чак пломбир", "ingredients": "Ванильный пломбир смешиваем с чак-чаком, пробиваем до однородной массы, подаём в вафельном стаканчике, посыпаем взрывной карамелью.", "allergens": ["Лактоза", "Глютен"], "special_notes": "Пищевая бумага сверху."},
+  {"category": "Десерты", "name": "Артур Ренатович", "ingredients": "Креметта, сахарный песок, ваниль экстракт, сливки, яйцо, крахмал, соль. Мороженое из каймака, сливок, сгущенки и корт. Соус из этого же мороженого разогретого со сливками.", "allergens": ["Лактоза", "Глютен"], "special_notes": ""}
+];
 
-  const $ = id => document.getElementById(id);
+// === ХРАНИЛИЩЕ (прогресс живёт в браузере на этом устройстве) ===
+const STORE_PREFIX = 'utki-trainer:';
+function loadJSON(key, fallback) {
+    try { return JSON.parse(localStorage.getItem(STORE_PREFIX + key)) || fallback; } catch (e) { return fallback; }
+}
+function saveJSON(key, value) {
+    try { localStorage.setItem(STORE_PREFIX + key, JSON.stringify(value)); } catch (e) {}
+}
 
-  // === 2. ПРОГРЕСС (хранится в браузере на этом устройстве) ===
-  const STORE_KEY = "menuMastery";
-  let memoryMastery = {}; // запасной вариант, если браузер не даёт сохранять
-  const getMastery = () => {
-    try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; }
-    catch (e) { return memoryMastery; }
-  };
-  const saveMastery = data => {
-    memoryMastery = data;
-    try { localStorage.setItem(STORE_KEY, JSON.stringify(data)); } catch (e) {}
-  };
+// === STATE ===
+let currentCategory = 'all';
+let currentMode = 'flashcards';
+let filteredData = [...menuData];
+let currentIndex = 0;
+let knownItems = new Set(loadJSON('knownItems', []));
+let learningItems = new Set(loadJSON('learningItems', []));
+let blankHistory = loadJSON('blankHistory', {});
 
-  const updateMastery = (dishIndex, isCorrect) => {
-    const mastery = getMastery();
-    if (!mastery[dishIndex]) mastery[dishIndex] = { status: "new", streak: 0 };
+// Match state
+let matchTimer = 60;
+let matchInterval = null;
+let selectedMatchItem = null;
+let matchedPairs = 0;
+let matchTotal = 0;
+let matchOver = false;
+
+// Learn mode state
+let currentLearnDish = null;
+let currentCorrectChunk = '';
+let lastLearnDish = null;
+
+const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// === УТИЛИТЫ ===
+function shuffleArray(array) {
+    const arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
+function getRandomItems(arr, n) {
+    return shuffleArray(arr).slice(0, n);
+}
+
+function escapeHtml(s) {
+    return String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+}
+
+// Делим состав на смысловые куски: по запятым вне скобок и по концу предложения
+// (точка перед заглавной буквой или цифрой). «ут. печень», «с/с лосось» и «(малина, сахар)» не режутся.
+// Каждый кусок хранит свой разделитель, чтобы текст можно было собрать обратно как был.
+function splitIngredients(text) {
+    const parts = [];
+    let depth = 0, start = 0;
+    for (let i = 0; i < text.length; i++) {
+        const ch = text[i];
+        if (ch === '(') { depth++; continue; }
+        if (ch === ')') { depth = Math.max(0, depth - 1); continue; }
+        if (depth > 0) continue;
+        const endsSentence = ch === '.' && /\s/.test(text[i + 1] || '') && /[A-ZА-ЯЁ0-9]/.test(text[i + 2] || '');
+        if (ch !== ',' && !endsSentence) continue;
+        let j = i + 1;
+        while (j < text.length && /\s/.test(text[j])) j++;
+        parts.push({ text: text.slice(start, i).trim(), sep: text.slice(i, j) });
+        start = j;
+        i = j - 1;
+    }
+    const tail = text.slice(start).match(/^([\s\S]*?)(\.?\s*)$/);
+    parts.push({ text: tail[1].trim(), sep: tail[2] });
+    return parts.filter(p => p.text.length > 0);
+}
+
+function chunkTexts(dish) {
+    return splitIngredients(dish.ingredients).map(p => p.text);
+}
+
+// Неверные варианты: куски состава других блюд, которых нет в составе этого блюда.
+// Сначала из выбранного раздела, если мало — из всего меню.
+function pickDistractors(correct, dish, count) {
+    const own = dish.ingredients.toLowerCase();
+    const seen = new Set([correct.toLowerCase()]);
+    const result = [];
+    const pools = [filteredData, menuData, menuData];
+    for (const pool of pools) {
+        for (const other of shuffleArray(pool)) {
+            if (result.length >= count) return result;
+            if (other.name === dish.name) continue;
+            const chunks = chunkTexts(other);
+            const candidate = chunks[Math.floor(Math.random() * chunks.length)];
+            const key = candidate.toLowerCase();
+            if (seen.has(key) || own.includes(key)) continue;
+            seen.add(key);
+            result.push(candidate);
+        }
+    }
+    return result;
+}
+
+function smoothScroll() {
+    return reduceMotion ? 'auto' : 'smooth';
+}
+
+// На телефоне после «Следующий» возвращаем экран к началу блока с вопросом
+function bringTopIntoView(el) {
+    const top = el.getBoundingClientRect().top;
+    if (top < 0) window.scrollBy({ top: top - 12, behavior: smoothScroll() });
+}
+
+function bringIntoView(el) {
+    el.scrollIntoView({ block: 'nearest', behavior: smoothScroll() });
+}
+
+function makeOptionButton(text, isCorrect, onPick) {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'option-btn';
+    btn.textContent = text;
+    btn.dataset.correct = String(isCorrect);
+    btn.onclick = () => onPick(btn);
+    return btn;
+}
+
+// Подсвечивает варианты после ответа; возвращает true, если выбран верный
+function revealAnswer(container, btn) {
+    const buttons = container.querySelectorAll('.option-btn');
+    buttons.forEach(b => {
+        b.disabled = true;
+        if (b.dataset.correct === 'true') b.classList.add('correct');
+    });
+    const isCorrect = btn.dataset.correct === 'true';
+    if (!isCorrect) btn.classList.add('wrong');
+    return isCorrect;
+}
+
+// === INITIALIZATION ===
+function init() {
+    changeCategory();
+}
+
+function changeCategory() {
+    currentCategory = document.getElementById('categoryFilter').value;
+    filteredData = currentCategory === 'all' ? [...menuData] : menuData.filter(item => item.category === currentCategory);
+    currentIndex = 0;
+    updateProgress();
+    renderMode();
+}
+
+function setMode(mode, btn) {
+    currentMode = mode;
+    if (mode !== 'match') stopMatchTimer();
+    document.querySelectorAll('.mode-container').forEach(el => el.classList.remove('active'));
+    document.getElementById(`mode-${mode}`).classList.add('active');
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active', b === btn));
+    renderMode();
+}
+
+function renderMode() {
+    if (currentMode === 'flashcards') renderFlashcard();
+    else if (currentMode === 'learn') nextLearnQuestion();
+    else if (currentMode === 'match') startMatchGame();
+    else if (currentMode === 'waiter') nextWaiterQuestion();
+}
+
+function updateProgress() {
+    const total = filteredData.length;
+    const knownInCategory = filteredData.filter(item => knownItems.has(item.name)).length;
+    const percent = total === 0 ? 0 : Math.round((knownInCategory / total) * 100);
+    document.getElementById('progressBar').style.width = `${percent}%`;
+    document.getElementById('progressText').textContent = `${percent}% выучено (${knownInCategory} из ${total})`;
+
+    saveJSON('knownItems', [...knownItems]);
+    saveJSON('learningItems', [...learningItems]);
+    saveJSON('blankHistory', blankHistory);
+}
+
+function highlightAllergens(text, allergens) {
+    let result = text;
+    allergens.forEach(allergen => {
+        const regex = new RegExp(`(${allergen})`, 'gi');
+        result = result.replace(regex, '<span class="allergen">$1</span>');
+    });
+    return result;
+}
+
+// === FLASHCARDS ===
+function renderFlashcard() {
+    if (filteredData.length === 0) return;
+    const item = filteredData[currentIndex];
+
+    // Сначала без анимации возвращаем карточку лицом, чтобы не мелькнул состав следующего блюда
+    const card = document.getElementById('flashcard');
+    card.classList.add('no-anim');
+    card.classList.remove('is-flipped');
+    void card.offsetWidth;
+    card.classList.remove('no-anim');
+
+    document.getElementById('fc-category').textContent = item.category;
+    document.getElementById('fc-name').textContent = item.name;
+    document.getElementById('fc-back-category').textContent = item.category;
+    document.getElementById('fc-back-name').textContent = item.name;
+    document.getElementById('fc-ingredients').innerHTML = highlightAllergens(escapeHtml(item.ingredients), item.allergens);
+
+    const statusEl = document.getElementById('fc-status');
+    const status = knownItems.has(item.name) ? '✅ Знаю' : learningItems.has(item.name) ? '🔄 Учу' : '';
+    statusEl.textContent = status;
+    statusEl.hidden = !status;
+
+    const allergensEl = document.getElementById('fc-allergens');
+    allergensEl.innerHTML = '<b>Аллергены:</b> ' + item.allergens.map(a => `<span>${escapeHtml(a)}</span>`).join('');
+    allergensEl.hidden = item.allergens.length === 0;
+
+    const notesEl = document.getElementById('fc-notes');
+    notesEl.innerHTML = `<strong>ОСОБЕННОСТИ:</strong> ${highlightAllergens(escapeHtml(item.special_notes), item.allergens)}`;
+    notesEl.hidden = !item.special_notes;
+
+    document.getElementById('fc-stats').textContent = `Карточка ${currentIndex + 1} из ${filteredData.length}`;
+}
+
+let ignoreClickUntil = 0;
+function flipCard() {
+    if (Date.now() < ignoreClickUntil) return;
+    document.getElementById('flashcard').classList.toggle('is-flipped');
+}
+
+// Листаем по кругу: после последней карточки — снова первая
+function nextCard() {
+    if (filteredData.length === 0) return;
+    currentIndex = (currentIndex + 1) % filteredData.length;
+    renderFlashcard();
+}
+
+function prevCard() {
+    if (filteredData.length === 0) return;
+    currentIndex = (currentIndex - 1 + filteredData.length) % filteredData.length;
+    renderFlashcard();
+}
+
+function markCard(status) {
+    const item = filteredData[currentIndex];
+    if (!item) return;
+    if (status === 'known') {
+        knownItems.add(item.name);
+        learningItems.delete(item.name);
+    } else {
+        learningItems.add(item.name);
+        knownItems.delete(item.name);
+    }
+    updateProgress();
+    nextCard();
+}
+
+// Свайп влево/вправо листает карточки, простое касание — переворачивает
+(function setupCardGestures() {
+    const scene = document.getElementById('flashcard-scene');
+    let startX = null, startY = null;
+    scene.addEventListener('touchstart', e => {
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+    }, { passive: true });
+    scene.addEventListener('touchend', e => {
+        if (startX === null) return;
+        const dx = e.changedTouches[0].clientX - startX;
+        const dy = e.changedTouches[0].clientY - startY;
+        startX = null;
+        if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+            ignoreClickUntil = Date.now() + 400;
+            if (dx < 0) nextCard(); else prevCard();
+        }
+    });
+    document.addEventListener('keydown', e => {
+        if (currentMode !== 'flashcards' || e.target.closest('select')) return;
+        if (e.key === 'ArrowRight') nextCard();
+        else if (e.key === 'ArrowLeft') prevCard();
+        else if ((e.key === ' ' || e.key === 'Enter') && (e.target === document.body || e.target === scene)) {
+            e.preventDefault();
+            flipCard();
+        }
+    });
+})();
+
+// === LEARN MODE (FILL IN THE BLANK) ===
+function getBlankData(dish) {
+    const parts = splitIngredients(dish.ingredients);
+    if (parts.length <= 1) return null; // из одного куска пропуск не сделать
+
+    let history = (blankHistory[dish.name] || []).filter(i => i < parts.length);
+    let available = parts.map((_, i) => i).filter(i => !history.includes(i));
+
+    // Если спросили про все куски — начинаем круг заново
+    if (available.length === 0) {
+        history = [];
+        available = parts.map((_, i) => i);
+    }
+
+    const targetIndex = available[Math.floor(Math.random() * available.length)];
+    history.push(targetIndex);
+    blankHistory[dish.name] = history;
+
+    return { parts, targetIndex, correctChunk: parts[targetIndex].text };
+}
+
+function renderBlankedText(blankData, filled) {
+    const html = blankData.parts.map((p, i) => {
+        const piece = i !== blankData.targetIndex
+            ? escapeHtml(p.text)
+            : filled ? `<span class="blank filled">${escapeHtml(p.text)}</span>` : '<span class="blank">_____</span>';
+        return piece + escapeHtml(p.sep);
+    }).join('');
+    document.getElementById('learn-ingredients-display').innerHTML = highlightAllergens(html, currentLearnDish.allergens);
+}
+
+let currentBlankData = null;
+function nextLearnQuestion() {
+    const feedback = document.getElementById('learn-feedback');
+    feedback.textContent = '';
+    feedback.style.color = 'var(--text)';
+    document.getElementById('learn-next-btn').style.display = 'none';
+    document.getElementById('learn-hint').style.display = 'none';
+    document.getElementById('learn-hint').textContent = '';
+    const optionsEl = document.getElementById('learn-options');
+    optionsEl.innerHTML = '';
+
+    const candidates = filteredData.filter(d => splitIngredients(d.ingredients).length > 1);
+    if (candidates.length === 0) {
+        document.getElementById('learn-dish-name').textContent = 'Здесь нечего заполнять';
+        document.getElementById('learn-ingredients-display').textContent = 'У блюд этого раздела слишком короткий состав. Выбери другой раздел.';
+        document.getElementById('learn-hint-btn').style.display = 'none';
+        return;
+    }
+
+    // Чаще спрашиваем блюда из «Учу», но не только их
+    const learning = candidates.filter(item => learningItems.has(item.name));
+    let pool = learning.length > 0 && Math.random() < 0.7 ? learning : candidates;
+    if (pool.length > 1) pool = pool.filter(d => d !== lastLearnDish);
+
+    currentLearnDish = pool[Math.floor(Math.random() * pool.length)];
+    lastLearnDish = currentLearnDish;
+    currentBlankData = getBlankData(currentLearnDish);
+    currentCorrectChunk = currentBlankData.correctChunk;
+
+    document.getElementById('learn-dish-name').textContent = currentLearnDish.name;
+    renderBlankedText(currentBlankData, false);
+
+    const options = shuffleArray([currentCorrectChunk, ...pickDistractors(currentCorrectChunk, currentLearnDish, 3)]);
+    options.forEach(opt => optionsEl.appendChild(makeOptionButton(opt, opt === currentCorrectChunk, checkLearnAnswer)));
+
+    document.getElementById('learn-hint-btn').style.display = 'inline-block';
+    bringTopIntoView(document.getElementById('learn-box'));
+}
+
+function showHint() {
+    const hintEl = document.getElementById('learn-hint');
+    const revealLength = Math.min(currentCorrectChunk.length, Math.max(4, Math.floor(currentCorrectChunk.length / 3)));
+    hintEl.textContent = `💡 Подсказка: пропущенная часть начинается на «${currentCorrectChunk.substring(0, revealLength)}...»`;
+    hintEl.style.display = 'block';
+}
+
+function checkLearnAnswer(btn) {
+    const isCorrect = revealAnswer(document.getElementById('learn-options'), btn);
+    document.getElementById('learn-hint-btn').style.display = 'none';
+    const feedback = document.getElementById('learn-feedback');
 
     if (isCorrect) {
-      mastery[dishIndex].streak += 1;
-      if (mastery[dishIndex].streak >= 2) mastery[dishIndex].status = "known";
-      else if (mastery[dishIndex].status === "new") mastery[dishIndex].status = "learning";
+        feedback.textContent = '✅ Верно! Отличная работа.';
+        feedback.style.color = 'var(--success)';
+        knownItems.add(currentLearnDish.name);
+        learningItems.delete(currentLearnDish.name);
     } else {
-      mastery[dishIndex].streak = 0;
-      mastery[dishIndex].status = "learning";
+        feedback.textContent = `❌ Неверно. Правильный ответ: ${currentCorrectChunk}`;
+        feedback.style.color = 'var(--error)';
+        learningItems.add(currentLearnDish.name);
+        knownItems.delete(currentLearnDish.name);
     }
-    saveMastery(mastery);
-    updateMasteryStatsUI();
-  };
+    renderBlankedText(currentBlankData, true);
+    updateProgress();
+    const nextBtn = document.getElementById('learn-next-btn');
+    nextBtn.style.display = 'inline-block';
+    bringIntoView(nextBtn);
+}
 
-  // «Новое» — все блюда, которые ещё ни разу не попадались
-  const updateMasteryStatsUI = () => {
-    const m = getMastery();
-    let known = 0, learning = 0;
-    dishes.forEach((_, i) => {
-      const status = m[i] && m[i].status;
-      if (status === "known") known++;
-      else if (status === "learning") learning++;
-    });
-    const fresh = dishes.length - known - learning;
-    $("mastery-stats").innerHTML = `🟢 ${known} Знаю &nbsp;|&nbsp; 🟡 ${learning} Учу &nbsp;|&nbsp; ⚪ ${fresh} Новое`;
-  };
+// === MATCH MODE ===
+// Похожие аллергены считаем одним, чтобы пара была однозначной (ром и вино — тоже алкоголь и т.п.)
+const ALLERGEN_GROUPS = [['алкоголь', 'ром', 'вино'], ['рыба', 'морепродукты', 'икра'], ['яйца', 'майонез'], ['орех', 'орехи'], ['цитрус', 'цитрусы']];
+function allergenKey(allergen) {
+    const a = allergen.toLowerCase();
+    const group = ALLERGEN_GROUPS.find(g => g.includes(a));
+    return group ? group[0] : a;
+}
 
-  // === 3. ГЕНЕРАЦИЯ ЗАДАНИЙ ===
-  const shuffle = items => {
-    const copy = [...items];
-    for (let i = copy.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [copy[i], copy[j]] = [copy[j], copy[i]];
+// Значение для пары: аллерген, которого нет у других блюд раунда, иначе короткий ингредиент,
+// который не встречается в их составах. Так у каждой карточки ровно одна пара.
+function pickMatchValue(dish, group) {
+    const others = group.filter(d => d !== dish);
+    const allergen = shuffleArray(dish.allergens).find(a =>
+        others.every(o => !o.allergens.some(b => allergenKey(b) === allergenKey(a))));
+    if (allergen) return allergen;
+    const othersText = others.map(o => (o.ingredients + ' ' + o.name).toLowerCase()).join(' | ');
+    return shuffleArray(chunkTexts(dish)).find(c => c.length <= 45 && !othersText.includes(c.toLowerCase())) || null;
+}
+
+function buildMatchPairs() {
+    let best = [];
+    for (let attempt = 0; attempt < 30; attempt++) {
+        // Если в разделе меньше 4 блюд — добираем из остального меню
+        const extra = menuData.filter(d => !filteredData.includes(d));
+        const group = [...shuffleArray(filteredData), ...shuffleArray(extra)].slice(0, 4);
+        const pairs = group.map(dish => ({ dish, value: pickMatchValue(dish, group) })).filter(p => p.value);
+        if (pairs.length === group.length) return pairs;
+        if (pairs.length > best.length) best = pairs;
     }
-    return copy;
-  };
+    return best;
+}
 
-  const allIngredients = [...new Set(dishes.flatMap(d => d[7]))];
+function stopMatchTimer() {
+    clearInterval(matchInterval);
+    matchInterval = null;
+}
 
-  // Для каждого блюда — 3 типа заданий
-  const tasks = dishes.flatMap((dish, dishIndex) => {
-    const [section, name, description, detailQuestion, detailAnswer, wrongA, wrongB, keyIngredients] = dish;
-    const alternatives = shuffle(dishes.filter((d, i) => i !== dishIndex && d[0] === section)).slice(0, 2).map(d => d[1]);
+function endMatch(won) {
+    stopMatchTimer();
+    matchOver = true;
+    document.getElementById('match-timer').textContent = won ? `🎉 Победа! За ${60 - matchTimer} с` : '⏰ Время вышло!';
+}
 
-    // Задание 1: Узнай блюдо
-    const task1 = {
-      section, dishIndex, type: "Узнай блюдо", mode: "single",
-      question: `Какое блюдо соответствует описанию?<span class="q-desc">${description}</span>`,
-      answer: name, options: [name, ...alternatives],
-      explanation: `<span class="chunk">${name}</span>. ${description}`
-    };
+function startMatchGame() {
+    stopMatchTimer();
+    matchTimer = 60;
+    matchedPairs = 0;
+    selectedMatchItem = null;
+    matchOver = false;
+    const timerEl = document.getElementById('match-timer');
+    timerEl.textContent = matchTimer;
 
-    // Задание 2: Деталь меню
-    const task2 = {
-      section, dishIndex, type: "Деталь меню", mode: "single",
-      question: `${name}. ${detailQuestion}`,
-      answer: detailAnswer, options: [detailAnswer, wrongA, wrongB],
-      explanation: `<span class="chunk">${name}</span>. ${description}`
-    };
+    const grid = document.getElementById('match-grid');
+    grid.innerHTML = '';
 
-    // Задание 3: Собери состав
-    const distractors = shuffle(allIngredients.filter(ing => !keyIngredients.includes(ing))).slice(0, 4);
-    const task3 = {
-      section, dishIndex, type: "Собери состав", mode: "multi",
-      question: `Выберите <strong>все</strong> ключевые ингредиенты блюда «${name}»:`,
-      correctIngredients: keyIngredients,
-      options: shuffle([...keyIngredients, ...distractors]),
-      explanation: `<span class="chunk">${name}</span>. Состав: ${keyIngredients.join(", ")}.<br><em class="explain-note">${description}</em>`
-    };
+    const pairs = buildMatchPairs();
+    matchTotal = pairs.length;
+    const items = shuffleArray(pairs.flatMap(p => [
+        { id: p.dish.name, text: p.dish.name, type: 'name' },
+        { id: p.dish.name, text: p.value, type: 'value' }
+    ]));
 
-    return [task1, task2, task3];
-  });
-
-  // === 4. СОСТОЯНИЕ ИГРЫ ===
-  let category = "all", round = [], index = 0, correctCount = 0, points = 0, streak = 0, misses = [], answered = false, hintUsed = false;
-  const selectedTags = new Set();
-  const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-  // === 5. ЛОГИКА ИНТЕРФЕЙСА ===
-  $("categories").addEventListener("click", e => {
-    const btn = e.target.closest("button[data-category]");
-    if (!btn) return;
-    category = btn.dataset.category;
-    $("categories").querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", String(b === btn)));
-  });
-
-  function goMenu() {
-    $("game").classList.add("hidden");
-    $("results").classList.add("hidden");
-    $("setup").classList.remove("hidden");
-    updateMasteryStatsUI();
-  }
-
-  // На телефоне после «Далее» возвращаем экран к началу вопроса
-  function scrollBoardIntoView() {
-    const top = document.querySelector(".game-board").getBoundingClientRect().top;
-    if (top < 0) window.scrollBy({ top: top - 12, behavior: reduceMotion ? "auto" : "smooth" });
-  }
-
-  function getWeightedPool(isMicro) {
-    const mastery = getMastery();
-    // Перемешиваем до сортировки, чтобы блюда с одинаковым весом каждый раз шли в новом порядке
-    const inCategory = () => shuffle(tasks.filter(t => category === "all" || t.section === category));
-    let pool = inCategory();
-
-    // Взвешивание: Учу (вес 3), Новое (вес 2), Знаю (вес 1)
-    pool.forEach(t => {
-      const m = mastery[t.dishIndex] || { status: "new" };
-      t.weight = m.status === "learning" ? 3 : (m.status === "new" ? 2 : 1);
+    items.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'match-item';
+        div.textContent = item.text;
+        div.dataset.id = item.id;
+        div.dataset.type = item.type;
+        div.setAttribute('role', 'button');
+        div.tabIndex = 0;
+        div.onclick = () => handleMatchClick(div);
+        div.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleMatchClick(div); } };
+        grid.appendChild(div);
     });
-    pool.sort((a, b) => b.weight - a.weight);
 
-    if (isMicro) {
-      // Микро-сессия: только «Учу» и «Новое», максимум 5 заданий
-      pool = pool.filter(t => t.weight > 1).slice(0, 5);
-      if (pool.length === 0) pool = inCategory().slice(0, 5);
+    matchInterval = setInterval(() => {
+        matchTimer--;
+        timerEl.textContent = matchTimer;
+        if (matchTimer <= 0) endMatch(false);
+    }, 1000);
+}
+
+function handleMatchClick(div) {
+    if (matchOver || div.classList.contains('matched')) return;
+
+    // Повторное касание снимает выбор
+    if (div === selectedMatchItem) {
+        div.classList.remove('selected');
+        selectedMatchItem = null;
+        return;
+    }
+    if (!selectedMatchItem) {
+        selectedMatchItem = div;
+        div.classList.add('selected');
+        return;
+    }
+    // Две карточки одного типа — просто переключаем выбор
+    if (selectedMatchItem.dataset.type === div.dataset.type) {
+        selectedMatchItem.classList.remove('selected');
+        selectedMatchItem = div;
+        div.classList.add('selected');
+        return;
+    }
+    if (selectedMatchItem.dataset.id === div.dataset.id) {
+        selectedMatchItem.classList.remove('selected');
+        selectedMatchItem.classList.add('matched');
+        div.classList.add('matched');
+        matchedPairs++;
+        selectedMatchItem = null;
+        if (matchedPairs === matchTotal) endMatch(true);
     } else {
-      // 10 вопросов, каждое блюдо — не больше одного раза
-      const uniqueDishes = [...new Set(pool.map(t => t.dishIndex))].slice(0, 10);
-      pool = uniqueDishes.map(id => {
-        const variants = pool.filter(t => t.dishIndex === id);
-        return variants[Math.floor(Math.random() * variants.length)]; // случайный тип задания для блюда
-      });
+        selectedMatchItem.classList.remove('selected');
+        selectedMatchItem = null;
+        div.classList.add('miss');
+        setTimeout(() => div.classList.remove('miss'), 500);
     }
-    return shuffle(pool);
-  }
+}
 
-  function startRound(isMicro = false) {
-    round = getWeightedPool(isMicro);
-    index = 0; correctCount = 0; points = 0; streak = 0; misses = [];
-    $("setup").classList.add("hidden");
-    $("results").classList.add("hidden");
-    $("game").classList.remove("hidden");
-    showQuestion();
-  }
+// === WAITER MODE ===
+function nextWaiterQuestion() {
+    const feedback = document.getElementById('waiter-feedback');
+    feedback.textContent = '';
+    document.getElementById('waiter-next-btn').style.display = 'none';
 
-  function showQuestion() {
-    if (index >= round.length) { finish(); scrollBoardIntoView(); return; }
-    answered = false; hintUsed = false; selectedTags.clear();
+    if (filteredData.length === 0) return;
 
-    const task = round[index];
-    $("hint").disabled = points < 100;
-    $("position").textContent = `ЗАДАНИЕ ${index + 1} / ${round.length}`;
-    $("streak").textContent = `✦ Серия ${streak}`;
-    $("score").textContent = `${points} очков`;
-    $("progress").setAttribute("aria-valuemax", String(round.length));
-    $("progress").setAttribute("aria-valuenow", String(index));
-    $("progress-fill").style.width = `${index / round.length * 100}%`;
+    const target = filteredData[Math.floor(Math.random() * filteredData.length)];
+    const speechEl = document.getElementById('waiter-speech');
+    const optionsEl = document.getElementById('waiter-options');
+    optionsEl.innerHTML = '';
 
-    $("question-type").textContent = `${task.type} · ${task.section}`;
-    $("question").innerHTML = task.question;
-    $("feedback").classList.add("hidden");
-    $("next").classList.add("hidden");
-    $("check-constructor").classList.add("hidden");
+    let question, correctAnswer, wrongAnswers;
 
-    const choices = $("choices");
-    choices.replaceChildren();
-    choices.className = task.mode === "single" ? "choices-list" : "choices-tags";
-
-    if (task.mode === "single") {
-      shuffle(task.options).forEach((option, i) => {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "answer";
-        btn.dataset.value = option;
-        btn.innerHTML = `<span class="answer-letter">${["А","Б","В","Г"][i]}</span> <span>${option}</span> <span class="hint-letter">${option.charAt(0)}</span>`;
-        btn.addEventListener("click", () => gradeSingle(option, btn));
-        choices.appendChild(btn);
-      });
+    const qType = Math.random();
+    if (qType < 0.33 && target.allergens.length > 0) {
+        const allergen = target.allergens[Math.floor(Math.random() * target.allergens.length)].toLowerCase();
+        question = `Подскажите, а в блюде «${target.name}» есть ${allergen}? У меня непереносимость.`;
+        correctAnswer = `Да, к сожалению, ${allergen} входит в состав этого блюда.`;
+        wrongAnswers = [`Нет, в этом блюде полностью отсутствует ${allergen}.`, `Мы можем легко убрать ${allergen} из этого блюда по вашему запросу.`];
+    } else if (qType < 0.66 && target.special_notes) {
+        question = `Расскажите, пожалуйста, а как именно подается или готовится «${target.name}»?`;
+        correctAnswer = target.special_notes;
+        const withNotes = pool => pool.filter(i => i.special_notes && i.special_notes !== target.special_notes);
+        const fromCategory = getRandomItems(withNotes(filteredData), 2);
+        const fromMenu = getRandomItems(withNotes(menuData).filter(i => !fromCategory.includes(i)), 2 - fromCategory.length);
+        wrongAnswers = [...fromCategory, ...fromMenu].map(i => i.special_notes);
     } else {
-      // Режим «Собери состав»
-      task.options.forEach(opt => {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "tag-option";
-        btn.textContent = opt;
-        btn.dataset.value = opt;
-        btn.addEventListener("click", () => toggleTag(btn, opt));
-        choices.appendChild(btn);
-      });
-      $("check-constructor").classList.remove("hidden");
-      $("check-constructor").onclick = gradeMulti;
-    }
-    scrollBoardIntoView();
-  }
-
-  function toggleTag(btn, value) {
-    if (answered) return;
-    if (selectedTags.has(value)) {
-      selectedTags.delete(value);
-      btn.classList.remove("selected");
-    } else {
-      selectedTags.add(value);
-      btn.classList.add("selected");
-    }
-  }
-
-  function gradeSingle(value, selectedBtn) {
-    if (answered) return;
-    answered = true;
-    const task = round[index];
-    const isCorrect = value === task.answer;
-    processResult(isCorrect, task);
-
-    $("choices").querySelectorAll("button").forEach(btn => {
-      btn.disabled = true;
-      if (btn.dataset.value === task.answer) btn.classList.add("correct");
-      else if (btn === selectedBtn) btn.classList.add("wrong");
-    });
-    showFeedback(isCorrect, task);
-  }
-
-  function gradeMulti() {
-    if (answered || selectedTags.size === 0) return;
-    answered = true;
-    const task = round[index];
-
-    // Верно, только если выбраны все нужные и нет лишних
-    const correctSet = new Set(task.correctIngredients);
-    let isCorrect = selectedTags.size === correctSet.size;
-    for (const tag of selectedTags) {
-      if (!correctSet.has(tag)) isCorrect = false;
+        question = `Что из этого входит в состав блюда «${target.name}»?`;
+        const chunks = chunkTexts(target);
+        correctAnswer = chunks[Math.floor(Math.random() * chunks.length)];
+        wrongAnswers = pickDistractors(correctAnswer, target, 2);
     }
 
-    processResult(isCorrect, task);
+    speechEl.textContent = question;
+    const options = shuffleArray([correctAnswer, ...wrongAnswers.slice(0, 2)]);
+    options.forEach(opt => optionsEl.appendChild(makeOptionButton(opt, opt === correctAnswer, checkWaiterAnswer)));
+    bringTopIntoView(document.getElementById('waiter-box'));
+}
 
-    $("choices").querySelectorAll("button").forEach(btn => {
-      btn.disabled = true;
-      const val = btn.dataset.value;
-      if (correctSet.has(val)) btn.classList.add(selectedTags.has(val) ? "correct" : "missed");
-      else if (selectedTags.has(val)) btn.classList.add("wrong");
-    });
-    showFeedback(isCorrect, task);
-  }
-
-  function processResult(isCorrect, task) {
+function checkWaiterAnswer(btn) {
+    const isCorrect = revealAnswer(document.getElementById('waiter-options'), btn);
+    const feedback = document.getElementById('waiter-feedback');
     if (isCorrect) {
-      correctCount++; streak++;
-      points += 100 + Math.min(streak - 1, 5) * 20;
+        feedback.textContent = '✅ Отличный ответ! Гость доволен.';
+        feedback.style.color = 'var(--success)';
     } else {
-      misses.push(task);
-      streak = 0;
+        const correct = document.querySelector('#waiter-options .option-btn[data-correct="true"]').textContent;
+        feedback.textContent = `❌ Неверно. Правильный ответ: ${correct}`;
+        feedback.style.color = 'var(--error)';
     }
-    updateMastery(task.dishIndex, isCorrect);
-    $("score").textContent = `${points} очков`;
-    $("streak").textContent = `✦ Серия ${streak}`;
-    $("progress").setAttribute("aria-valuenow", String(index + 1));
-    $("progress-fill").style.width = `${(index + 1) / round.length * 100}%`;
-    $("hint").disabled = true;
-    $("next").classList.remove("hidden");
-    $("next").focus();
-    $("check-constructor").classList.add("hidden");
-  }
+    const nextBtn = document.getElementById('waiter-next-btn');
+    nextBtn.style.display = 'inline-block';
+    bringIntoView(nextBtn);
+}
 
-  function showFeedback(isCorrect, task) {
-    $("feedback-title").textContent = isCorrect
-      ? "Верно! Отличная работа."
-      : task.mode === "single"
-        ? `Правильный ответ: ${task.answer}`
-        : "Не совсем. Пунктир — пропущено, зачёркнуто — лишнее.";
-    $("feedback-title").style.color = isCorrect ? "var(--green)" : "var(--red)";
-    $("feedback-detail").innerHTML = task.explanation;
-    $("feedback").classList.remove("hidden");
-  }
-
-  function finish() {
-    $("game").classList.add("hidden");
-    $("results").classList.remove("hidden");
-    $("result-count").textContent = `${correctCount} / ${round.length}`;
-    $("result-score").textContent = `${points} очков`;
-    $("result-message").textContent = misses.length
-      ? `Есть ${misses.length} блюд для повторения. Система добавила их в очередь "Учу".`
-      : "Без ошибок! Ты отлично знаешь этот раздел.";
-    $("retry").classList.toggle("hidden", misses.length === 0);
-  }
-
-  // === 6. ОБРАБОТЧИКИ СОБЫТИЙ ===
-  $("start").addEventListener("click", () => startRound(false));
-  $("micro-start").addEventListener("click", () => startRound(true));
-
-  $("retry").addEventListener("click", () => {
-    round = shuffle(misses);
-    index = 0; correctCount = 0; points = 0; streak = 0; misses = [];
-    $("results").classList.add("hidden");
-    $("game").classList.remove("hidden");
-    showQuestion();
-  });
-
-  $("restart").addEventListener("click", () => startRound(false));
-  $("menu-from-game").addEventListener("click", goMenu);
-  $("menu-from-results").addEventListener("click", goMenu);
-
-  $("next").addEventListener("click", () => { index++; showQuestion(); });
-
-  $("hint").addEventListener("click", () => {
-    if (answered || hintUsed || points < 100) return;
-    const task = round[index];
-    hintUsed = true; points -= 100;
-    $("score").textContent = `${points} очков`;
-    $("hint").disabled = true;
-
-    if (task.mode === "single") {
-      const correctBtn = [...$("choices").querySelectorAll("button")].find(b => b.dataset.value === task.answer);
-      if (correctBtn) correctBtn.classList.add("hint-reveal");
-    } else {
-      // Подсвечиваем один правильный ингредиент, который ещё не выбран
-      const correctSet = new Set(task.correctIngredients);
-      const options = [...$("choices").querySelectorAll("button")];
-      const toReveal = options.find(b => correctSet.has(b.dataset.value) && !b.classList.contains("selected"));
-      if (toReveal) toReveal.classList.add("hint-reveal");
-    }
-  });
-
-  // Сброс прогресса: подтверждение прямо на кнопке, без всплывающих окон
-  const RESET_LABEL = "Сбросить весь прогресс обучения";
-  let resetTimer = null;
-  function disarmReset(label = RESET_LABEL) {
-    clearTimeout(resetTimer); resetTimer = null;
-    $("reset-progress").classList.remove("armed");
-    $("reset-progress").textContent = label;
-  }
-  $("reset-progress").addEventListener("click", () => {
-    if (!resetTimer) {
-      $("reset-progress").classList.add("armed");
-      $("reset-progress").textContent = "Точно сбросить? Нажми ещё раз";
-      resetTimer = setTimeout(() => disarmReset(), 4000);
-      return;
-    }
-    saveMastery({});
-    updateMasteryStatsUI();
-    disarmReset("Прогресс сброшен");
-    setTimeout(() => { if (!resetTimer) $("reset-progress").textContent = RESET_LABEL; }, 2000);
-  });
-
-  // Инициализация
-  updateMasteryStatsUI();
+// Start
+init();
 </script>
+</body>
 </html>
